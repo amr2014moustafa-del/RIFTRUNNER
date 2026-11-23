@@ -10,8 +10,8 @@ button:hover:not(:disabled){transform:scale(1.07);box-shadow:0 0 16px #6af}butto
 .sub{opacity:.85;margin:6px}.bar{width:60%;height:12px;border:2px solid #9bf;border-radius:8px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:#ffd84a;transition:width 1.3s linear}
 table{border-collapse:collapse}td{padding:2px 10px;border-bottom:1px solid #fff3}.ac{opacity:.4}.ac.on{opacity:1;color:#ffd84a}
 #t{position:absolute;top:8px;left:50%;transform:translateX(-50%);background:#000c;border:2px solid #ffd84a;border-radius:10px;padding:6px 14px;display:none;color:#ffd84a;font-weight:bold}
-#pb{position:absolute;top:6px;right:6px;display:none;padding:.2em .7em}input[type=range]{width:160px}</style></head><body>
-<div id="w"><canvas id="c" width="960" height="448"></canvas><button id="pb" onclick="togglePause()">II</button><div id="t"></div><div id="u"></div></div>
+#pb{position:absolute;top:6px;right:6px;display:none;padding:.2em .7em}#sb{position:absolute;top:6px;right:58px;display:none;padding:.2em .7em;background:linear-gradient(#16a085,#075b58);border-color:#8ff}input[type=range]{width:160px}</style></head><body>
+<div id="w"><canvas id="c" width="960" height="448"></canvas><button id="pb" onclick="togglePause()">II</button><button id="sb" onclick="openShop()">SHOP</button><div id="t"></div><div id="u"></div></div>
 <script>
 const T=32,VW=960,VH=448,$=i=>document.getElementById(i),cv=$('c'),g=cv.getContext('2d'),U=$('u');
 const WN=['Verdant Run','Gearwork Gorge','Frostbite Peaks','Bounce Bayou','Crystal Caverns','Crumble Ruins','Gale Heights','Laser Labyrinth','Umbra Depths','Rift Citadel'];
@@ -44,9 +44,9 @@ fl(10);L.W=x;L.goal={x:(x-5)*T,y:(y-3)*T,w:T,h:3*T};
 for(let i=1;i<=3;i++){let c=Math.floor(L.W*i/4);while(L.h[c]>=99)c++;L.st.push({x:c*T+16,y:(L.h[c]-3.2)*T,got:0})}
 return L}
 //ENDGEN
-const DS={b:{},s:{},c:0,d:0,j:0,t:0,k:0,a:{},v:{m:.6,s:.8,x:0},last:0,done:0,sk:0,u:0,w:0,diff:1,resume:null};
+const DS={b:{},s:{},c:0,d:0,j:0,t:0,k:0,a:{},v:{m:.6,s:.8,x:0},last:0,done:0,sk:0,u:0,w:0,diff:1,resume:null,cash:0,weapon:0,up:{hp:0,damage:0,rate:0,speed:0}};
 let S=JSON.parse(JSON.stringify(DS));try{const q=JSON.parse(localStorage.getItem('riftrunner'));if(q)S=Object.assign(S,q)}catch(e){}
-const save=()=>{try{localStorage.setItem('riftrunner',JSON.stringify(S))}catch(e){}};
+let saveFlash=0;const save=()=>{try{S._savedAt=Date.now();localStorage.setItem('riftrunner',JSON.stringify(S));saveFlash=90;return true}catch(e){console.warn('Save failed',e);return false}};
 const DIFF=()=>Math.max(0,Math.min(2,Number(S.diff??1)));
 function setDiff(d){S.diff=d;save();menu()}
 const done=i=>S.b[i]!==undefined,wst=w=>{let n=0;for(let l=0;l<10;l++)n+=S.s[w*11+l]||0;return n},tst=()=>{let n=0;for(let w=0;w<10;w++)n+=wst(w);return n},nbo=()=>Object.keys(S.b).length;
@@ -73,11 +73,11 @@ function mus(s){song=s;step=0;nextT=AC?AC.currentTime+.1:0}
 // STATE
 let st='load',L=null,p,cam=0,time=0,coins=0,stars=0,kills=0,dead=0,inv=0,fd=1,card=0,tk=0,E=0,jp=0,coy=0,gpj=0,gps=0,ps=[],pr=[],dthL=0,menuW=0,hp=3,cpi=0,msg=0;
 const K={};
-addEventListener('keydown',e=>{ac();const k=e.code;if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(k))e.preventDefault();if(!K[k]&&['Space','ArrowUp','KeyW','KeyZ'].includes(k))jp=6;K[k]=1;if(k=='Escape'||k=='KeyP'){if(st=='end'&&E>300)menu();else togglePause()}});
+addEventListener('keydown',e=>{ac();const k=e.code;if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(k))e.preventDefault();if(!K[k]&&['Space','ArrowUp','KeyW','KeyZ'].includes(k))jp=6;K[k]=1;if(k=='KeyJ'||k=='KeyX')shoot();if(k=='KeyB'&&st=='play')openShop();if(k=='Escape'||k=='KeyP'){if(st=='shop')closeShop();else if(st=='end'&&E>300)menu();else togglePause()}});
 addEventListener('keyup',e=>K[e.code]=0);
 U.addEventListener('click',e=>{if(e.target.tagName=='BUTTON'){ac();sfx('ui');if(!started){started=1;mus(11)}}});
 cv.addEventListener('click',()=>{ac();if(st=='end'&&E>900)menu()});
-const ui=h=>{U.innerHTML=h;U.style.display=h?'flex':'none';$('pb').style.display=st=='play'?'block':'none'};
+const ui=h=>{U.innerHTML=h;U.style.display=h?'flex':'none';$('pb').style.display=st=='play'?'block':'none';$('sb').style.display=st=='play'?'block':'none'};
 const sk=()=>SKIN[S.sk];
 function menu(){st='menu';mus(11);ui(`<h1>RIFTRUNNER</h1><p class=sub>Ten worlds. One Rift. Run, jump, survive.</p><p class=sub>SELECT DIFFICULTY</p><div class=row><button class=s ${DIFF()==0?'g':''} onclick="setDiff(0)">EASY</button><button class=s ${DIFF()==1?'g':''} onclick="setDiff(1)">NORMAL</button><button class=s ${DIFF()==2?'g':''} onclick="setDiff(2)">HARD</button></div><div class=col><button class=g onclick="newG()">PLAY</button><button onclick="cont()">CONTINUE</button><button onclick="sel(S.w)">LEVEL SELECT</button><button onclick="setM()">SETTINGS</button><button onclick="achM()">ACHIEVEMENTS</button><button onclick="crd()">CREDITS</button></div><p class=sub>★ ${tst()} / 300</p><p class=sub style="letter-spacing:.22em;color:#9cf;font-weight:bold">MADE BY AMR</p>`)}
 function newG(){start(0)}
@@ -94,7 +94,7 @@ function crd(){st='cr';ui(`<h2>CREDITS</h2><p class=sub>RIFTRUNNER<br>Game desig
 let pausedFlag=0;
 function togglePause(){if(st=='play'){st='pause';pausedFlag=1;ui(`<h2>PAUSED</h2><div class=col><button class=g onclick="togglePause()">RESUME</button><button onclick="start(L.id)">RESTART</button><button onclick="setM()">SETTINGS</button><button onclick="pausedFlag=0;sel(L.w)">LEVEL SELECT</button><button onclick="pausedFlag=0;menu()">MAIN MENU</button></div>`)}else if(st=='pause'||(st=='set'&&pausedFlag)){st='play';pausedFlag=0;ui('')}}
 function start(id){L=mk(id);S.last=id;S.resume={id,cpi:0};save();const w=L.w;if(L.boss){SG[10].r=RT[w]-5;mus(10)}else mus(w);
-p={x:2*T,y:11*T-28,w:20,h:28,vx:0,vy:0,on:0,face:1,rid:null,sq:1};cpi=0;cam=0;time=0;coins=0;stars=0;kills=0;dead=0;inv=0;dthL=0;ps=[];pr=[];hp=3;fd=1;card=130;pausedFlag=0;st='play';ui('');
+p={x:2*T,y:11*T-28,w:20,h:28,vx:0,vy:0,on:0,face:1,rid:null,sq:1};cpi=0;cam=0;time=0;coins=0;stars=0;kills=0;dead=0;inv=0;dthL=0;ps=[];pr=[];shots=[];shotClock=0;hp=3+Math.min(4,S.up.hp||0);fd=1;card=130;pausedFlag=0;st='play';ui('');
 if(L.boss){const n=Math.max(2,Math.round((3+(w>4)+(w>8))*[.75,1,1.55][DIFF()]));L.b={x:24*T,y:11*T-64,w:64,h:64,hp:n,max:n,inv:0,cd:90,mode:'idle',t:0,vx:0,vy:0,d:-1,pi:0}}}
 // GAME
 const sol=(cx,cy)=>cx<0||cx>=L.W||cy>=(L.h[cx]??99),ov=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
@@ -103,14 +103,14 @@ function hurt(){if(inv>0||dead)return;if(L.boss&&hp>1){hp--;inv=90;p.vy=-8;sfx('
 function die(){dead=55;S.d++;dthL++;sfx(L.boss?'lose':'hurt');burst(p.x+10,p.y+14,sk(),30);burst(p.x+10,p.y+14,'#fff',10)}
 function respawn(){const c=L.cp[cpi];p.x=c.x;p.y=c.y-28;p.vx=p.vy=0;hp=3;inv=60;pr=[];L.pl.forEach(f=>{f.y=f.oy;f.t=0;f.fv=0});if(L.boss){const b=L.b;b.x=24*T;b.mode='idle';b.cd=90;b.vx=0;b.y=11*T-64;b.hp=b.max}fd=.8}
 function win(){if(st!='play')return;st='win';sfx('win');S.resume=null;save();const id=L.id,sc=coins*10+stars*500+kills*50+Math.max(0,1500-(time*10|0))+(L.boss?2000:0);
-S.s[id]=Math.max(S.s[id]||0,L.boss?3:stars);S.b[id]=Math.max(S.b[id]||0,sc);S.c+=coins;S.k+=kills;if(!dthL&&L.l>=3)S.u=1;
+S.s[id]=Math.max(S.s[id]||0,L.boss?3:stars);S.b[id]=Math.max(S.b[id]||0,sc);S.c+=coins;S.cash+=coins;S.k+=kills;if(!dthL&&L.l>=3)S.u=1;
 if(id==108){S.done=1;chk();st='end';E=0;mus(12);ui('');return}chk();
 const nx=L.l==10?-1:L.l==9?(L.w+1)*11:id+1;
 ui(`<h2>${L.boss?'BOSS DEFEATED!':'LEVEL CLEAR!'}</h2><p style="font-size:2em;margin:4px">${'★'.repeat(L.boss?3:stars)}${'☆'.repeat(3-(L.boss?3:stars))}</p><p>Score <b>${sc}</b> · Best ${S.b[id]} · Coins ${coins} · Time ${time.toFixed(1)}s</p><div class=row>${nx>=0?`<button class=g onclick="start(${nx})">NEXT</button>`:''}<button onclick="start(${id})">REPLAY</button><button onclick="sel(${L.w})">LEVEL SELECT</button></div>`)}
-let gpOK=true;
+let gpOK=true;let shots=[],shotClock=0;const weaponNames=['PULSE','RAPID','BURST'];const weaponCosts=[0,180,420];const upgradeInfo=[['MAX HEALTH','hp',120,'Adds one heart'],['SHOT POWER','damage',150,'Stronger shots'],['FIRE RATE','rate',130,'Shoot faster'],['MOVE SPEED','speed',110,'Move faster']];function openShop(){if(st!=='play'&&st!=='shop')return;st='shop';S.resume={id:L.id,cpi};save();let h=`<h2>RIFT SHOP</h2><p class=sub>Coins: <b>${S.cash}</b> · Your weapon: <b>${weaponNames[S.weapon||0]}</b></p><div class=col style="max-width:560px">`;weaponNames.forEach((n,i)=>{h+=`<div class=row><span>${n} ${i==0?'(STARTER)':''}</span><button class=s ${S.weapon==i?'g':''} ${S.weapon>=i?'':'disabled'} onclick="buyWeapon(${i})">${S.weapon==i?'EQUIPPED':S.weapon>i?'OWNED':weaponCosts[i]+' COINS'}</button></div>`});upgradeInfo.forEach(([n,k,c,d])=>{const lv=S.up[k]||0;h+=`<div class=row><span>${n} · LV ${lv} — ${d}</span><button class=s onclick="buyUpgrade('${k}',${c})">UPGRADE · ${c+lv*90}</button></div>`});h+=`<p class=sub>Upgrades stay saved between levels.</p><button class=g onclick="closeShop()">BACK TO GAME</button></div>`;ui(h)}function closeShop(){if(st==='shop'){st='play';ui('')}}function buyWeapon(i){if(i<=S.weapon){S.weapon=i;save();openShop();return}const cost=weaponCosts[i];if(S.cash<cost){toast('Not enough coins');return}S.cash-=cost;S.weapon=i;save();openShop();toast('Weapon unlocked!')}function buyUpgrade(k,base){const lv=S.up[k]||0,cost=base+lv*90;if(S.cash<cost){toast('Not enough coins');return}if(lv>=5){toast('Max level reached');return}S.cash-=cost;S.up[k]=lv+1;save();openShop();toast('Upgrade purchased!')}function shoot(){if(st!=='play'||dead||shotClock>0)return;shotClock=[0,9,16][S.weapon||0]-Math.min(6,S.up.rate||0);const dmg=1+(S.up.damage||0);const dir=p.face||1;const y=p.y+12;const speed=[9,11,8][S.weapon||0];if((S.weapon||0)==2){for(const a of[-.22,0,.22])shots.push({x:p.x+10+dir*12,y,vx:Math.cos(a)*speed*dir,vy:Math.sin(a)*speed,dmg,w:12,h:5})}else shots.push({x:p.x+10+dir*12,y,vx:speed*dir,vy:0,dmg,w:14,h:5});sfx('shot')}
 function pad(){if(!gpOK)return null;try{if(typeof navigator==='undefined'||typeof navigator.getGamepads!=='function'){gpOK=false;return null}const a=navigator.getGamepads();if(!a)return null;for(let i=0;i<a.length;i++)if(a[i]&&a[i].connected!==false)return a[i];return null}catch(e){gpOK=false;return null}}
 let autosaveTicks=0;
-function upd(){S.t+=1/60;time+=1/60;if(++autosaveTicks>=300){autosaveTicks=0;S.resume={id:L.id,cpi};save()}if(card>0)card--;if(fd>0)fd-=.03;
+function upd(){S.t+=1/60;time+=1/60;if(++autosaveTicks>=120){autosaveTicks=0;S.resume={id:L.id,cpi};save()}if(card>0)card--;if(fd>0)fd-=.03;
 let ax=(K.ArrowRight||K.KeyD?1:0)-(K.ArrowLeft||K.KeyA?1:0),jh=K.Space||K.ArrowUp||K.KeyW||K.KeyZ;const gp=pad();
 try{if(gp){if(Math.abs(gp.axes[0])>.3)ax=gp.axes[0]>0?1:-1;if(gp.buttons[14]&&gp.buttons[14].pressed)ax=-1;if(gp.buttons[15]&&gp.buttons[15].pressed)ax=1;const b=(gp.buttons[0]&&gp.buttons[0].pressed)||(gp.buttons[1]&&gp.buttons[1].pressed);if(b&&!gpj)jp=6;gpj=b;jh=jh||b;const s=gp.buttons[9]&&gp.buttons[9].pressed;if(s&&!gps)togglePause();gps=s}}catch(e){gpOK=false}
 ps.forEach(q=>{q.x+=q.vx;q.y+=q.vy;q.vy+=.25;q.l--});ps=ps.filter(q=>q.l>0);
@@ -118,7 +118,7 @@ if(dead>0){if(--dead==0)respawn();return}
 if(inv>0)inv--;const f=L.f,ice=f.includes('ice'),G=f.includes('lg')?.36:.62;
 L.pl.forEach(q=>{q.dx=0;if(q.m){q.dx=q.dx2=q.dx||0;const v=q._v=(q._v||1.2);q.x+=v;if(q.x>q.x1){q.x=q.x1;q._v=-1.2}if(q.x<q.x0){q.x=q.x0;q._v=1.2}q.dx=q._v}if(q.c&&q.t>0){q.t++;if(q.t>40){q.fv+=.5;q.y+=q.fv}}});
 const rp=p.rid;if(rp&&p.on)p.x+=rp.dx||0;
-const acc=p.on?(ice?.1:.6):.38;if(ax){p.vx+=ax*acc;p.face=ax}else p.vx*=p.on?(ice?.985:.75):.97;p.vx=Math.max(-4.8,Math.min(4.8,p.vx));
+const acc=p.on?(ice?.1:.6):.38;if(ax){p.vx+=ax*acc;p.face=ax}else p.vx*=p.on?(ice?.985:.75):.97;p.vx=Math.max(-4.8-(S.up.speed||0)*.35,Math.min(4.8+(S.up.speed||0)*.35,p.vx));if(K.KeyJ||K.KeyX)shoot();if(shotClock>0)shotClock--;
 if(p.on)coy=7;else coy--;if(jp>0&&coy>0){p.vy=-(f.includes('lg')?11.4:12.8);coy=0;jp=0;p.jmp=1;S.j++;sfx('jump');p.sq=1.3}jp--;if(p.jmp&&!jh&&p.vy<-4)p.vy=-4;
 const wv=f.includes('wind')?Math.sin(time*.9)*1.3:0,dx=p.vx+wv;p.x+=dx;let r0=Math.floor(p.y/T),r1=Math.floor((p.y+p.h-1)/T);
 if(dx>0){const cx=Math.floor((p.x+p.w)/T);for(let r=r0;r<=r1;r++)if(sol(cx,r)){p.x=cx*T-p.w;p.vx=0;break}}else if(dx<0){const cx=Math.floor(p.x/T);for(let r=r0;r<=r1;r++)if(sol(cx,r)){p.x=(cx+1)*T;p.vx=0;break}}
@@ -132,12 +132,12 @@ for(const s of L.sp)if(ov(hb,s))hurt();
 for(const z of L.lz){const c=(Math.round(time*60)+z.ph)%150;if(c<60&&ov(hb,{x:z.x,y:0,w:10,h:z.y}))hurt()}
 for(const c of L.co)if(!c.got&&Math.abs(c.x-p.x-10)<22&&Math.abs(c.y-p.y-14)<26){c.got=1;coins++;sfx('coin');burst(c.x,c.y,'#fd4',5)}
 for(const s of L.st)if(!s.got&&Math.abs(s.x-p.x-10)<26&&Math.abs(s.y-p.y-14)<30){s.got=1;stars++;sfx('star');burst(s.x,s.y,'#fff',22)}
-for(const e of L.en)if(e.a){e.x+=e.d*(.75+DIFF()*.65);if(e.x>e.x1){e.x=e.x1;e.d=-1}if(e.x<e.x0){e.x=e.x0;e.d=1}
+for(const q of shots){q.x+=q.vx;q.y+=q.vy;for(const e of L.en)if(e.a&&ov(q,e)){e.hp-=q.dmg;q.hit=1;burst(q.x,q.y,'#8ff',4);if(e.hp<=0){e.a=0;kills++;S.cash+=8+L.w*2;sfx('stomp');burst(e.x+13,e.y+12,'#8ff',12)}}if(L.boss&&L.b&&L.b.hp>0&&ov(q,L.b)&&L.b.inv<=0){L.b.hp-=q.dmg;L.b.inv=8;q.hit=1;burst(q.x,q.y,'#8ff',5);if(L.b.hp<=0){S.cash+=100+L.w*20;save()}}}shots=shots.filter(q=>!q.hit&&q.x>-50&&q.x<L.W*T+50);for(const e of L.en)if(e.a){e.x+=e.d*(.75+DIFF()*.65);if(e.x>e.x1){e.x=e.x1;e.d=-1}if(e.x<e.x0){e.x=e.x0;e.d=1}
  if(ov(hb,e)){if(p.vy>1&&p.y+p.h-p.vy<e.y+14){e.hp=(e.hp||1)-1;p.vy=-9;kills++;sfx('stomp');burst(e.x+13,e.y+12,e.type==0?'#f84':e.type==1?'#5df':'#b6f',14);if(e.hp<=0)e.a=0}else hurt()}}
 for(let c=cpi+1;c<L.cp.length;c++)if(p.x>L.cp[c].x){cpi=c;S.resume={id:L.id,cpi};save();burst(p.x,p.y,'#4f8',12);toast('Checkpoint')}
 if(L.boss)boss();
 pr.forEach(q=>{q.x+=q.vx;q.y+=q.vy;if(q.gv)q.vy+=.12;if(ov(hb,q))hurt()});pr=pr.filter(q=>q.x>-50&&q.x<L.W*T+50&&q.y<VH+50);
-if(!L.boss&&ov(p,L.goal))win();
+if(!L.boss&&ov(p,L.goal))win();if(Math.floor(time*60)%300===0&&Math.floor(time*60)>0){S.resume={id:L.id,cpi};save()}
 cam+=(Math.max(0,Math.min(L.W*T-VW,p.x-VW/2+60))-cam)*.12}
 function boss(){const b=L.b,pt=PAT[L.w],ph=b.hp<=b.max/2?1:0,gy=11*T-b.h;if(b.inv>0)b.inv--;if(b.hp<=0){if(!b.dd){b.dd=1;burst(b.x+32,b.y+32,'#fff',60);sfx('win');setTimeout(win,900)}return}
 b.t++;
@@ -169,11 +169,11 @@ for(const s of L.st)if(!s.got){g.shadowColor='#fff';g.shadowBlur=12;star(s.x,s.y
 for(const e of L.en)if(e.a){g.fillStyle=['#e5532d','#35bde8','#9b62e8'][e.type||0];g.beginPath();if((e.type||0)==1){g.moveTo(e.x,e.y+e.h);g.lineTo(e.x+e.w/2,e.y-5);g.lineTo(e.x+e.w,e.y+e.h);g.closePath()}else g.roundRect(e.x,e.y,e.w,e.h,(e.type||0)==2?3:8);g.fill();g.fillStyle='#fff';g.fillRect(e.x+5,e.y+6,6,6);g.fillRect(e.x+15,e.y+6,6,6);g.fillStyle='#000';g.fillRect(e.x+6+e.d*2,e.y+8,3,3);g.fillRect(e.x+16+e.d*2,e.y+8,3,3)}
 if(L.b)drawBoss(L.b);
 for(const q of pr){g.fillStyle=q.k?'#f90':'#f4a';g.shadowColor=g.fillStyle;g.shadowBlur=10;g.fillRect(q.x,q.y,q.w,q.h);g.shadowBlur=0}
-if(!dead&&!(inv>0&&tk%6<3)){const sq=p.sq,ww=p.w*(2-sq)*1,hh=p.h*sq,X=p.x+p.w/2,Y=p.y+p.h,run=Math.abs(p.vx)>.5&&p.on;g.fillStyle=sk();g.beginPath();g.roundRect(X-ww/2,Y-hh,ww,hh-5,6);g.fill();
+if(!dead&&!(inv>0&&tk%6<3)){const sq=p.sq,ww=p.w*(2-sq)*1,hh=p.h*sq,X=p.x+p.w/2,Y=p.y+p.h,run=Math.abs(p.vx)>.5&&p.on;g.fillStyle=sk();g.beginPath();g.roundRect(X-ww/2,Y-hh,ww,hh-5,6);g.fill();g.fillStyle='#ddd';g.fillRect(X+(p.face>0?8:-15),Y-hh+16,10,5);
 g.fillStyle='#223';g.fillRect(X-8+(p.face>0?4:-2),Y-hh+6,8,8);g.fillStyle='#fff';g.fillRect(X-6+(p.face>0?5:-1),Y-hh+8,3,3);g.fillStyle=sk();const l=run?Math.sin(tk/3)*4:0;g.fillRect(X-7+l,Y-5,5,5);g.fillRect(X+2-l,Y-5,5,5)}
-ps.forEach(q=>{g.globalAlpha=Math.min(1,q.l/20);g.fillStyle=q.c;g.fillRect(q.x,q.y,4,4)});g.globalAlpha=1;g.restore();
+shots.forEach(q=>{g.fillStyle='#8ff';g.shadowColor='#8ff';g.shadowBlur=12;g.fillRect(q.x,q.y,q.w,q.h);g.shadowBlur=0});ps.forEach(q=>{g.globalAlpha=Math.min(1,q.l/20);g.fillStyle=q.c;g.fillRect(q.x,q.y,4,4)});g.globalAlpha=1;g.restore();
 if(L.f.includes('dark')){const x=p.x-cam+10,y=p.y+14,r=g.createRadialGradient(x,y,50,x,y,230);r.addColorStop(0,'#0000');r.addColorStop(1,'#000f');g.fillStyle=r;g.fillRect(0,0,VW,VH)}
-txt(`W${w+1}-${L.l==10?'B':L.l+1}  ${WN[w]}`,12,24,18,'#fff','left');txt(`● ${coins}   ★ ${stars}/3   ${time.toFixed(1)}s`,12,46,15,'#ffe14a','left');
+txt(`W${w+1}-${L.l==10?'B':L.l+1}  ${WN[w]}`,12,24,18,'#fff','left');txt(`● ${coins}  BANK ${S.cash}   ★ ${stars}/3   ${time.toFixed(1)}s`,12,46,15,'#ffe14a','left');txt(`HP ${hp}  ${weaponNames[S.weapon||0]}  DMG ${1+(S.up.damage||0)}`,12,67,13,'#9ff','left');if(saveFlash>0){saveFlash--;txt('SAVED ✓',VW-16,24,13,'#8f8','right')}
 if(L.boss){const b=L.b;txt(BN[w],VW/2,26,20,'#fff');g.fillStyle='#000a';g.fillRect(VW/2-150,34,300,12);g.fillStyle='#f33';g.fillRect(VW/2-150,34,300*Math.max(0,b.hp)/b.max,12);txt('♥'.repeat(hp),VW-100,26,22,'#f55')}
 if(card>0){g.globalAlpha=Math.min(1,card/40);g.fillStyle='#0008';g.fillRect(0,150,VW,110);txt(L.boss?'BOSS: '+BN[w]:`WORLD ${w+1}-${L.l==10?'BONUS':L.l+1}`,VW/2,205,38,'#fff');txt(WN[w],VW/2,242,20,'#ffd84a');g.globalAlpha=1}
 if(dead>0)txt('DEFEATED',VW/2,VH/2,50,'#f55');
@@ -188,6 +188,6 @@ const L4=[['YOU DID IT!',60,64,'#ffd84a'],['THANK YOU FOR PLAYING',360,30,'#fff'
 L4.forEach((l,i)=>{const a=Math.min(1,Math.max(0,(t-l[1])/90));if(!a)return;g.globalAlpha=a*(t>2500?Math.max(0,1-(t-2500)/150):1);g.shadowColor=l[3];g.shadowBlur=24;if('letterSpacing'in g)g.letterSpacing='6px';txt(l[0],VW/2,ys[i]-(1-a)*20,l[2],l[3]);g.shadowBlur=0});g.globalAlpha=1;if('letterSpacing'in g)g.letterSpacing='0px';
 if(t>2700)menu()}
 let last=performance.now(),acu=0;
-function loop(n){acu+=Math.min(50,n-last);last=n;try{while(acu>=16.67){acu-=16.67;if(st=='play')upd()}}catch(e){console.error(e);acu=0}try{draw()}catch(e){console.error(e)}requestAnimationFrame(loop)}
+addEventListener('beforeunload',()=>{if(L&&['play','pause','shop','set'].includes(st)){S.resume={id:L.id,cpi};save()}});document.addEventListener('visibilitychange',()=>{if(document.hidden&&L&&['play','pause','shop'].includes(st)){S.resume={id:L.id,cpi};save()}});function loop(n){acu+=Math.min(50,n-last);last=n;try{while(acu>=16.67){acu-=16.67;if(st=='play')upd()}}catch(e){console.error(e);acu=0}try{draw()}catch(e){console.error(e)}requestAnimationFrame(loop)}
 ui(`<h1>RIFTRUNNER</h1><p class=sub>LOADING WORLDS…</p><div class=bar><i id=lb></i></div>`);setTimeout(()=>$('lb').style.width='100%',50);setTimeout(()=>{menu()},1500);requestAnimationFrame(loop);
 </script></body></html>
