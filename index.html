@@ -91,7 +91,7 @@ U.addEventListener('click',e=>{if(e.target.tagName=='BUTTON'){ac();sfx('ui');if(
 cv.addEventListener('click',()=>{ac();if(st=='end'&&E>900)menu()});
 const ui=h=>{U.innerHTML=h;U.style.display=h?'flex':'none';$('pb').style.display=st=='play'?'block':'none'};
 const sk=()=>SKIN[S.sk];
-function menu(){st='menu';pausedFlag=0;mus(12);const has=!!S.resume;const names=['EASY','NORMAL','HARD'];let diff='<div class="row" style="margin:8px auto 16px"><span style="width:100%;color:#ffd84a;font-weight:bold;letter-spacing:.16em">SELECT DIFFICULTY</span>';[1,2,3].forEach((d,i)=>diff+='<button class="s '+(DIFF()===d?'g':'')+'" onclick="setDiff('+d+')">'+names[i]+'</button>');diff+='</div>';ui(`<div class="menu-shell simple-menu"><div class="menu-top"><span>RIFTRUNNER</span><span>AN ECHO IN THE DARK</span></div><h1>RIFTRUNNER</h1><div class="menu-kicker">AN ECHO IN THE DARK</div><p class="menu-desc">You are Ahmed. Ten connected regions. A forgotten world of shadows, strange whispers and buried memories.</p>`+diff+`<div class="menu-actions"><button class="g" onclick="startWorld(false)">EXPLORE THE RIFT</button><button onclick="cont()">CLASSIC LEVELS</button><button onclick="continueGame()" ${has?'':'disabled'}>CONTINUE</button><button onclick="sel(S.w||0)">LEVEL SELECT</button><button class="small-action" onclick="setM()">SETTINGS</button><button class="small-action" onclick="achM()">ACHIEVEMENTS</button><button class="small-action" onclick="crd()">CREDITS</button></div><div class="menu-foot">★ ${tst()} / 300<br>MADE BY AMR</div></div>`)}
+function menu(){st='menu';pausedFlag=0;mus(12);const has=!!S.resume;const names=['VERY EASY','EASY','NORMAL','HARD'];let diff='<div class="row" style="margin:8px auto 16px"><span style="width:100%;color:#ffd84a;font-weight:bold;letter-spacing:.16em">SELECT DIFFICULTY</span>';names.forEach((n,i)=>diff+='<button class="s '+(DIFF()===i?'g':'')+'" onclick="setDiff('+i+')">'+n+'</button>');diff+='</div>';ui(`<div class="menu-shell simple-menu"><div class="menu-top"><span>RIFTRUNNER</span><span>STORY ADVENTURE</span></div><h1>RIFTRUNNER</h1><div class="menu-kicker">THE WORLD HAS LOST ITS LIGHT</div><p class="menu-desc">Explore ten regions, clear stages, collect upgrades and uncover the Rift.</p>`+diff+`<div class="menu-actions"><button class="g" onclick="playNew()">▶ &nbsp; NEW STORY</button><button onclick="continueGame()" ${has?'':'disabled'}>CONTINUE</button><button onclick="startWorld(false)">OPEN WORLD</button><button onclick="sel(S.w||0)">WORLD MAP · LEVELS</button><button onclick="openShop()">SUPPLY SHOP</button><button onclick="achM()">ACHIEVEMENTS & STATS</button><button onclick="setM()">SETTINGS & CONTROLS</button><button onclick="worldTimeMenu()">ATMOSPHERE</button><button onclick="crd()">CREDITS</button></div><div class="menu-foot">STORY DEMO · IN DEVELOPMENT</div></div>`)}
 function newG(){playNew()}
 function playNew(){const chosen=DIFF();activeSlot=0;S=JSON.parse(JSON.stringify(DS));S.diff=chosen;S.ammoReserve=30;S.magAmmo=6;S.ammoSetup=1;S.resume=null;save();demoNotice('new')}
 function continueGame(){if(!S.resume){toast('NO SAVE YET');return}demoNotice('continue')}
@@ -194,21 +194,21 @@ for(const e of L.en)if(e.a){if(e.kind===0){/* cartoon zombie */g.fillStyle='#668
 if(L.b)drawBoss(L.b);
 for(const q of pr){g.fillStyle=q.k?'#f90':'#c7f';g.shadowColor=g.fillStyle;g.shadowBlur=12;g.beginPath();g.arc(q.x+q.w/2,q.y+q.h/2,Math.max(q.w,q.h)/2,0,Math.PI*2);g.fill();g.shadowBlur=0}
 if(!dead&&!(inv>0&&tk%6<3)){const sq=p.sq,ww=p.w*(2-sq),hh=p.h*sq,X=p.x+p.w/2,Y=p.y+p.h,run=Math.abs(p.vx)>.5&&p.on,l=run?Math.sin(tk/3)*3:0,dir=p.face;g.save();g.translate(X,Y);g.scale(1/sq,1/sq);g.scale(dir||1,1);
-// Original high-speed blue runner mascot: swept-back quills, expressive face and bright runner shoes.
-g.fillStyle='#071629';g.beginPath();g.moveTo(-10,-12);g.lineTo(-29,-27);g.quadraticCurveTo(-25,-12,-18,-5);g.lineTo(-34,-9);g.quadraticCurveTo(-29,2,-15,2);g.lineTo(-21,10);g.quadraticCurveTo(-8,12,0,3);g.lineTo(13,2);g.quadraticCurveTo(22,-5,17,-19);g.lineTo(7,-30);g.closePath();g.fill();
-g.fillStyle='#147bd1';g.beginPath();g.moveTo(-10,-12);g.lineTo(-27,-25);g.quadraticCurveTo(-24,-13,-16,-7);g.lineTo(-30,-9);g.quadraticCurveTo(-24,1,-12,1);g.lineTo(-17,8);g.quadraticCurveTo(-7,9,1,1);g.lineTo(12,0);g.quadraticCurveTo(19,-7,14,-18);g.lineTo(5,-27);g.closePath();g.fill();
-g.fillStyle='#35c7ff';g.beginPath();g.moveTo(-13,-17);g.lineTo(-24,-23);g.lineTo(-16,-12);g.lineTo(-26,-10);g.lineTo(-12,-5);g.lineTo(-16,3);g.quadraticCurveTo(-6,5,1,-3);g.lineTo(10,-2);g.quadraticCurveTo(15,-8,10,-17);g.lineTo(4,-23);g.closePath();g.fill();
-g.fillStyle='#0b4d9b';g.beginPath();g.ellipse(1,-13,13,15,-.18,0,Math.PI*2);g.fill();
-g.fillStyle='#f5d6ad';g.beginPath();g.ellipse(7,-13,10,7,-.12,0,Math.PI*2);g.fill();
-g.fillStyle='#fff';g.beginPath();g.ellipse(1,-22,6,9,-.2,0,Math.PI*2);g.ellipse(9,-21,5,8,.12,0,Math.PI*2);g.fill();
-g.fillStyle='#14243a';g.beginPath();g.ellipse(dir>0?3:0,-21,2.3,4,0,0,Math.PI*2);g.ellipse(dir>0?10:7,-20,2,3.5,0,0,Math.PI*2);g.fill();
-g.fillStyle='#fff';g.beginPath();g.arc(dir>0?3.7:0.7,-22,1,0,Math.PI*2);g.arc(dir>0?10.7:7.7,-21,1,0,Math.PI*2);g.fill();
-g.strokeStyle='#082b54';g.lineWidth=1.8;g.beginPath();g.moveTo(5,-7);g.quadraticCurveTo(10,-4,14,-8);g.stroke();
-g.fillStyle='#f5d6ad';g.beginPath();g.ellipse(-8,-9,5,4,-.3,0,Math.PI*2);g.fill();
-g.fillStyle='#eafaff';g.beginPath();g.ellipse(-5,-2,5,3,0,0,Math.PI*2);g.ellipse(10,-2,5,3,0,0,Math.PI*2);g.fill();
-g.fillStyle='#ff7b35';g.beginPath();g.roundRect(-13+l,-1,13,7,3);g.roundRect(2-l,-1,14,7,3);g.fill();
-g.fillStyle='#fff';g.fillRect(-11+l,2,10,2);g.fillRect(4-l,2,10,2);
-g.fillStyle='#14243a';g.fillRect(-13+l,6,14,2);g.fillRect(2-l,6,15,2);
+// Original Ahmed adventurer: green shirt, blue jeans and a blue cap.
+g.fillStyle='#18334a';g.fillRect(-10,-17,20,17);
+g.fillStyle='#245a9b';g.fillRect(-10,-13,9,13);g.fillRect(1,-13,9,13);
+g.fillStyle='#d7e8f7';g.fillRect(-10,-2,9,3);g.fillRect(1,-2,9,3);
+g.fillStyle='#263b56';g.fillRect(-11,-1,11,3);g.fillRect(1,-1,11,3);
+g.fillStyle='#2f9b55';g.fillRect(-10,-27,20,13);
+g.fillStyle='#217a42';g.fillRect(-10,-27,4,13);
+g.fillStyle='#e6b58e';g.fillRect(-14,-25,5,10);g.fillRect(9,-25,5,10);
+g.fillStyle='#e6b58e';g.beginPath();g.roundRect(-8,-40,16,15,4);g.fill();
+g.fillStyle='#25344b';g.fillRect(-5,-34,2,2);g.fillRect(3,-34,2,2);
+g.strokeStyle='#7d4636';g.lineWidth=1.5;g.beginPath();g.moveTo(-3,-29);g.quadraticCurveTo(0,-27,4,-29);g.stroke();
+g.fillStyle='#1d6fb4';g.beginPath();g.arc(0,-39,9,Math.PI,Math.PI*2);g.fill();
+g.fillStyle='#16558c';g.fillRect(-9,-40,18,3);g.fillRect(4,-38,10,3);
+g.fillStyle='#2f9b55';g.fillRect(-13+l,-25,5,12);g.fillRect(8-l,-25,5,12);
+g.fillStyle='#e6b58e';g.fillRect(-14+l,-14,6,4);g.fillRect(8-l,-14,6,4);
 g.restore()}shots.forEach(q=>{g.fillStyle='#8ff';g.shadowColor='#8ff';g.shadowBlur=16;g.beginPath();g.arc(q.x+q.w/2,q.y+q.h/2,q.w/2,0,Math.PI*2);g.fill();g.shadowBlur=0});ps.forEach(q=>{g.globalAlpha=Math.min(1,q.l/20);g.fillStyle=q.c;g.fillRect(q.x,q.y,4,4)});g.globalAlpha=1;g.restore();
 const progress=Math.max(0,Math.min(.999,p.x/(L.W*T)));const phase=(S.mood==='morning'?0:S.mood==='sunset'?1:2);const weather=worldMode?Math.floor(time/150)%4:(L.id%11)%4;g.save();if(phase===0){g.fillStyle='rgba(170,205,225,.07)';g.fillRect(0,0,VW,VH);g.fillStyle='rgba(255,225,170,.22)';g.beginPath();g.arc(760,105,34,0,Math.PI*2);g.fill();g.fillStyle='rgba(255,239,190,.12)';g.beginPath();g.arc(760,105,52,0,Math.PI*2);g.fill()}else if(phase===1){g.fillStyle='rgba(218,139,92,.12)';g.fillRect(0,0,VW,VH);g.fillStyle='#f4a35f';g.beginPath();g.arc(760,86,27,0,Math.PI*2);g.fill();g.strokeStyle='rgba(255,188,112,.55)';g.lineWidth=2;for(let a=-1.1;a<=1.1;a+=.22){g.beginPath();g.moveTo(760+Math.sin(a)*34,86-Math.cos(a)*34);g.lineTo(760+Math.sin(a)*49,86-Math.cos(a)*49);g.stroke()}}else{g.fillStyle='rgba(3,5,18,.58)';g.fillRect(0,0,VW,VH);for(let i=0;i<42;i++){const sx=(i*173+tk*.18)%VW,sy=(i*71)%220;g.fillStyle='rgba(225,235,255,.62)';g.fillRect(sx,sy,2,2)}}if(weather===1||weather===3){g.strokeStyle='rgba(190,215,235,.42)';g.lineWidth=1;for(let i=0;i<70;i++){const x=(i*139+tk*5)%VW,y=(i*83+tk*8)%VH;g.beginPath();g.moveTo(x,y);g.lineTo(x-5,y+13);g.stroke()}}g.restore();
 if(phase===0){g.save();g.translate(VW-48,46);g.strokeStyle='rgba(255,224,143,.9)';g.lineWidth=3;for(let a=0;a<8;a++){const q=a*Math.PI/4;g.beginPath();g.moveTo(Math.cos(q)*18,Math.sin(q)*18);g.lineTo(Math.cos(q)*25,Math.sin(q)*25);g.stroke()}g.fillStyle='#ffd978';g.shadowColor='#ffcf68';g.shadowBlur=18;g.beginPath();g.arc(0,0,13,0,Math.PI*2);g.fill();g.restore()}else if(phase===2){g.save();g.translate(VW-48,46);g.fillStyle='#dce8ff';g.shadowColor='#a9caff';g.shadowBlur=16;g.beginPath();g.arc(0,0,16,0,Math.PI*2);g.fill();g.shadowBlur=0;g.fillStyle='#10172d';g.beginPath();g.arc(8,-7,15,0,Math.PI*2);g.fill();g.fillStyle='rgba(220,232,255,.65)';g.beginPath();g.arc(-19,-18,1.5,0,Math.PI*2);g.fill();g.restore()}
