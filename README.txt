@@ -1,22 +1,23 @@
-RIFTRUNNER - offline Windows 10 game
+RIFTRUNNER - Offline Windows Game
 
-1) UPLOAD TO GITHUB
-   a. Unzip this ZIP on your computer.
-   b. Go to github.com, sign in (free), click "New repository", give it any name, click "Create repository".
-   c. Click "uploading an existing file", then drag EVERYTHING from the unzipped folder into the page
-      (include the ".github" folder; on a Mac press Cmd+Shift+. in Finder to show it).
-   d. Click "Commit changes".
+BUILD
+- The GitHub Actions workflow builds a portable Windows executable automatically
+  whenever changes are pushed to the main branch.
+- To start a build manually, open the repository's Actions tab, select
+  "Build Windows Game", then choose "Run workflow".
 
-2) START THE BUILD
-   The build starts automatically after you commit. To start it by hand:
-   open the "Actions" tab > "Build Windows Game.exe" > "Run workflow" > "Run workflow".
+DOWNLOAD
+- Wait for the workflow to finish successfully.
+- Open the completed run and download the "Game-exe" artifact.
+- Extract the downloaded ZIP. It contains Game.exe.
 
-3) DOWNLOAD Game.exe
-   Wait ~3-6 minutes for a green check mark. Open the finished run, scroll to "Artifacts",
-   click "Game-exe". GitHub downloads a .zip; extract it - it contains one file: Game.exe.
-   If the run shows a red X, copy the error text from the failed step and send it to Claude.
+PLAY
+- Run Game.exe on Windows.
+- The game is designed to work offline.
+- Progress is saved locally by the game.
+- Press F11 for fullscreen. Use the in-game pause control or the configured
+  pause key to pause.
 
-4) PLAY OFFLINE ON WINDOWS 10
-   Copy Game.exe anywhere and double-click it. No internet, no browser, nothing to install.
-   Progress saves automatically on your computer. F11 = fullscreen. Esc or P = pause.
-   (Windows SmartScreen may warn about an unsigned app: click "More info" > "Run anyway".)
+NOTE
+- Windows may display a SmartScreen warning because this is an unsigned
+  independently built application.
