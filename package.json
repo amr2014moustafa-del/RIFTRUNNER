@@ -18,24 +18,21 @@
     "productName": "RIFTRUNNER",
     "files": [
       "main.js",
+      "index.html",
       "splash.html",
-      "game/**/*",
-      "build/icon.png"
+      "icon.png",
+      "icon.ico"
     ],
     "directories": {
-      "output": "dist",
-      "buildResources": "build"
+      "output": "dist"
     },
     "win": {
-      "icon": "build/icon.ico",
-      "target": [
-        "portable"
-      ]
+      "icon": "icon.ico",
+      "target": ["portable"]
     },
     "portable": {
       "artifactName": "Game.exe"
     },
     "asar": true
-  },
-  "homepage": "https://localhost/"
+  }
 }
