@@ -101,9 +101,9 @@ const sol=(cx,cy)=>cx<0||cx>=L.W||cy>=(L.h[cx]??99),ov=(a,b)=>a.x<b.x+b.w&&a.x+a
 function burst(x,y,c,n=14){for(let i=0;i<n;i++)ps.push({x,y,vx:(Math.random()-.5)*7,vy:(Math.random()-.8)*7,l:30+Math.random()*20,c})}
 function hurt(){if(inv>0||dead)return;if(L.boss&&hp>1){hp--;inv=90;p.vy=-8;sfx('hurt');burst(p.x,p.y,'#f55');return}die()}
 function die(){dead=55;S.d++;dthL++;sfx(L.boss?'lose':'hurt');burst(p.x+10,p.y+14,sk(),30);burst(p.x+10,p.y+14,'#fff',10)}
-function respawn(){const c=L.cp[cpi];p.x=c.x;p.y=c.y-28;p.vx=p.vy=0;hp=3;inv=60;pr=[];L.pl.forEach(f=>{f.y=f.oy;f.t=0;f.fv=0});if(L.boss){const b=L.b;b.x=24*T;b.mode='idle';b.cd=90;b.vx=0;b.y=11*T-64;b.hp=b.max}fd=.8}
+function respawn(){const c=L.cp[cpi];p.x=c.x;p.y=c.y-28;p.vx=p.vy=0;hp=3+Math.min(4,S.up.hp||0);inv=60;pr=[];L.pl.forEach(f=>{f.y=f.oy;f.t=0;f.fv=0});if(L.boss){const b=L.b;b.x=24*T;b.mode='idle';b.cd=90;b.vx=0;b.y=11*T-64;b.hp=b.max}fd=.8}
 function win(){if(st!='play')return;st='win';sfx('win');S.resume=null;save();const id=L.id,sc=coins*10+stars*500+kills*50+Math.max(0,1500-(time*10|0))+(L.boss?2000:0);
-S.s[id]=Math.max(S.s[id]||0,L.boss?3:stars);S.b[id]=Math.max(S.b[id]||0,sc);S.c+=coins;S.cash+=coins;S.k+=kills;if(!dthL&&L.l>=3)S.u=1;
+S.s[id]=Math.max(S.s[id]||0,L.boss?3:stars);S.b[id]=Math.max(S.b[id]||0,sc);S.c+=coins;S.k+=kills;if(!dthL&&L.l>=3)S.u=1;
 if(id==108){S.done=1;chk();st='end';E=0;mus(12);ui('');return}chk();
 const nx=L.l==10?-1:L.l==9?(L.w+1)*11:id+1;
 ui(`<h2>${L.boss?'BOSS DEFEATED!':'LEVEL CLEAR!'}</h2><p style="font-size:2em;margin:4px">${'★'.repeat(L.boss?3:stars)}${'☆'.repeat(3-(L.boss?3:stars))}</p><p>Score <b>${sc}</b> · Best ${S.b[id]} · Coins ${coins} · Time ${time.toFixed(1)}s</p><div class=row>${nx>=0?`<button class=g onclick="start(${nx})">NEXT</button>`:''}<button onclick="start(${id})">REPLAY</button><button onclick="sel(${L.w})">LEVEL SELECT</button></div>`)}
@@ -130,7 +130,7 @@ for(const s of L.spr)if(p.vy>=0&&ov(p,s)){p.vy=-17;p.jmp=0;sfx('spring');burst(s
 const hb={x:p.x+3,y:p.y+3,w:p.w-6,h:p.h-4};
 for(const s of L.sp)if(ov(hb,s))hurt();
 for(const z of L.lz){const c=(Math.round(time*60)+z.ph)%150;if(c<60&&ov(hb,{x:z.x,y:0,w:10,h:z.y}))hurt()}
-for(const c of L.co)if(!c.got&&Math.abs(c.x-p.x-10)<22&&Math.abs(c.y-p.y-14)<26){c.got=1;coins++;sfx('coin');burst(c.x,c.y,'#fd4',5)}
+for(const c of L.co)if(!c.got&&Math.abs(c.x-p.x-10)<22&&Math.abs(c.y-p.y-14)<26){c.got=1;coins++;S.cash++;save();sfx('coin');burst(c.x,c.y,'#fd4',5)}
 for(const s of L.st)if(!s.got&&Math.abs(s.x-p.x-10)<26&&Math.abs(s.y-p.y-14)<30){s.got=1;stars++;sfx('star');burst(s.x,s.y,'#fff',22)}
 for(const q of shots){q.x+=q.vx;q.y+=q.vy;for(const e of L.en)if(e.a&&ov(q,e)){e.hp-=q.dmg;q.hit=1;burst(q.x,q.y,'#8ff',4);if(e.hp<=0){e.a=0;kills++;S.cash+=8+L.w*2;sfx('stomp');burst(e.x+13,e.y+12,'#8ff',12)}}if(L.boss&&L.b&&L.b.hp>0&&ov(q,L.b)&&L.b.inv<=0){L.b.hp-=q.dmg;L.b.inv=8;q.hit=1;burst(q.x,q.y,'#8ff',5);if(L.b.hp<=0){S.cash+=100+L.w*20;save()}}}shots=shots.filter(q=>!q.hit&&q.x>-50&&q.x<L.W*T+50);for(const e of L.en)if(e.a){e.x+=e.d*(.75+DIFF()*.65);if(e.x>e.x1){e.x=e.x1;e.d=-1}if(e.x<e.x0){e.x=e.x0;e.d=1}
  if(ov(hb,e)){if(p.vy>1&&p.y+p.h-p.vy<e.y+14){e.hp=(e.hp||1)-1;p.vy=-9;kills++;sfx('stomp');burst(e.x+13,e.y+12,e.type==0?'#f84':e.type==1?'#5df':'#b6f',14);if(e.hp<=0)e.a=0}else hurt()}}
