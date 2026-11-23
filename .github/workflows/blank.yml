@@ -1,4 +1,3 @@
-
 name: Build Windows Game
 
 on:
@@ -12,25 +11,36 @@ permissions:
 jobs:
   build:
     runs-on: windows-latest
-
     steps:
-      - name: Download game files
+      - name: Check out project
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build Game.exe
+      - name: Build portable Game.exe
         run: npm run dist
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+
+      - name: Verify Game.exe
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "dist/Game.exe")) {
+            Get-ChildItem -Recurse dist
+            throw "dist/Game.exe was not created"
+          }
+          Get-Item "dist/Game.exe" | Select-Object Name, Length
 
       - name: Upload Game.exe
         uses: actions/upload-artifact@v4
         with:
-          name: RIFTRUNNER-Windows
-          path: dist/*.exe
+          name: Game-exe
+          path: dist/Game.exe
           if-no-files-found: error
