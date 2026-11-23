@@ -1,0 +1,41 @@
+{
+  "name": "riftrunner",
+  "version": "1.0.0",
+  "description": "RIFTRUNNER - offline platformer with 110 levels",
+  "main": "main.js",
+  "author": "RIFTRUNNER",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win portable"
+  },
+  "devDependencies": {
+    "electron": "33.2.1",
+    "electron-builder": "25.1.8"
+  },
+  "build": {
+    "appId": "com.riftrunner.game",
+    "productName": "RIFTRUNNER",
+    "files": [
+      "main.js",
+      "splash.html",
+      "game/**/*",
+      "build/icon.png"
+    ],
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        "portable"
+      ]
+    },
+    "portable": {
+      "artifactName": "Game.exe"
+    },
+    "asar": true
+  },
+  "homepage": "https://localhost/"
+}
