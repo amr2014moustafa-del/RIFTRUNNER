@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RIFTRUNNER: PUZZLE RUSH</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#05070d;color:#e9f1ff;font-family:Inter,'Segoe UI',Arial,sans-serif;display:flex;justify-content:center;align-items:center;height:100vh;overflow:hidden;user-select:none}#w{position:relative;width:min(100vw,calc(100vh*960/448));aspect-ratio:960/448;isolation:isolate}canvas{width:100%;height:100%;display:block;background:#03050b}
-#u{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(5,5,20,.72);overflow:auto;padding:10px;text-align:center;font-size:clamp(10px,1.7vw,16px)}
+#u{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(2,5,14,.96),rgba(4,8,19,.97));overflow:auto;padding:10px;text-align:center;font-size:clamp(10px,1.7vw,16px)}
 .menu-shell{position:relative;width:min(560px,94%);max-height:100%;overflow:auto;padding:clamp(12px,2vw,22px);border:0;border-radius:0;background:transparent;box-shadow:none;text-align:center}.menu-shell:after{display:none}.menu-shell.simple-menu{background:transparent}@keyframes riftPulse{50%{transform:scale(1.08) rotate(15deg);opacity:.55}}
 .menu-top{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#9db8cc;letter-spacing:.24em;font-size:.72em}.menu-shell h1{font-size:clamp(38px,7vw,76px);letter-spacing:.16em;margin:8px 0 2px;background:linear-gradient(#fff,#ffd84a 52%,#ff5a3a);-webkit-background-clip:text;color:transparent;filter:drop-shadow(0 0 14px #f84);animation:p 2s infinite alternate}.menu-kicker{color:#72d3da;letter-spacing:.26em;font-size:.78em}.menu-desc{max-width:570px;margin:12px 0 22px;color:#b5c8d8;line-height:1.6}.menu-actions{display:flex;flex-direction:column;gap:9px;max-width:340px;margin:22px auto}.menu-actions button{width:100%;min-height:48px;text-align:center;padding:12px 16px;font-size:.9em}.simple-menu{width:min(620px,94%);text-align:center;padding:clamp(24px,5vw,48px)}.simple-menu .menu-top{letter-spacing:.16em}.simple-menu h1{margin:28px 0 8px}.simple-menu .menu-kicker{margin-bottom:28px}.simple-actions{display:flex;flex-direction:column;max-width:330px;margin:24px auto 12px}.simple-actions button{min-height:56px;text-align:center;justify-content:center;font-size:1em}.simple-actions .small-action{min-height:42px;background:transparent;border-color:#ffffff24;color:#a9bdca}.simple-menu .menu-desc{margin:14px auto 24px;text-align:center}.simple-menu button:disabled{opacity:.35;cursor:not-allowed;filter:grayscale(1)}.menu-foot{color:#7892a9;letter-spacing:.16em;font-size:.72em;margin-top:16px}
 .slot-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0}.slot-card{min-height:138px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;text-align:left;padding:15px;border-radius:14px;background:linear-gradient(145deg,#142b3c,#09131f);border:1px solid #507284;color:#e9f1ff}.slot-card:hover{border-color:#77dce5;background:linear-gradient(145deg,#1b3b4c,#0b1927)}.slot-card small{color:#8baabd;letter-spacing:.12em}.slot-card strong{font-size:1.05em}.slot-card .slot-state{color:#72d3da;font-size:.75em}
@@ -91,7 +91,8 @@ U.addEventListener('click',e=>{if(e.target.tagName=='BUTTON'){ac();sfx('ui');if(
 cv.addEventListener('click',()=>{ac();if(st=='end'&&E>900)menu()});
 const ui=h=>{U.innerHTML=h;U.style.display=h?'flex':'none';$('pb').style.display=st=='play'?'block':'none'};
 const sk=()=>SKIN[S.sk];
-function menu(){st='menu';pausedFlag=0;mus(12);const has=!!S.resume;const names=['VERY EASY','EASY','NORMAL','HARD'];let diff='<div class="row" style="margin:8px auto 16px"><span style="width:100%;color:#ffd84a;font-weight:bold;letter-spacing:.16em">SELECT DIFFICULTY</span>';names.forEach((n,i)=>diff+='<button class="s '+(DIFF()===i?'g':'')+'" onclick="setDiff('+i+')">'+n+'</button>');diff+='</div>';ui(`<div class="menu-shell simple-menu"><div class="menu-top"><span>RIFTRUNNER</span><span>STORY ADVENTURE</span></div><h1>RIFTRUNNER</h1><div class="menu-kicker">THE WORLD HAS LOST ITS LIGHT</div><p class="menu-desc">Explore ten regions, clear stages, collect upgrades and uncover the Rift.</p>`+diff+`<div class="menu-actions"><button class="g" onclick="playNew()">▶ &nbsp; NEW STORY</button><button onclick="continueGame()" ${has?'':'disabled'}>CONTINUE</button><button onclick="startWorld(false)">OPEN WORLD</button><button onclick="sel(S.w||0)">WORLD MAP · LEVELS</button><button onclick="openShop()">SUPPLY SHOP</button><button onclick="achM()">ACHIEVEMENTS & STATS</button><button onclick="setM()">SETTINGS & CONTROLS</button><button onclick="worldTimeMenu()">ATMOSPHERE</button><button onclick="crd()">CREDITS</button></div><div class="menu-foot">STORY DEMO · IN DEVELOPMENT</div></div>`)}
+function menu(){st='menu';pausedFlag=0;mus(12);const has=!!S.resume;ui(`<div class="menu-shell simple-menu"><div class="menu-top"><span>RIFTRUNNER</span><span>YOU ARE AHMED</span></div><h1>RIFTRUNNER</h1><div class="menu-kicker">EXPLORE THE UNKNOWN</div><p class="menu-desc">A mysterious world. A broken Rift. Your adventure starts here.</p><div class="menu-actions simple-actions"><button class="g" onclick="startWorld(false)">EXPLORE THE RIFT</button><button onclick="start(0)">CLASSIC LEVEL</button><button onclick="continueGame()" ${has?'':'disabled'}>CONTINUE</button><button onclick="sel(S.w||0)">LEVEL SELECT</button><button onclick="storyModeNotice()">STORY MODE</button><button onclick="openShop()">SHOP</button><button onclick="setM()">SETTINGS</button><button onclick="achM()">ACHIEVEMENTS</button><button onclick="crd()">CREDITS</button></div><div class="menu-foot">MADE BY AMR · RIFTRUNNER</div></div>`)}
+function storyModeNotice(){st='storylocked';ui(`<div class="menu-shell simple-menu"><div class="menu-top"><span>RIFTRUNNER</span><span>STORY MODE</span></div><h2>COMING SOON</h2><p class="menu-desc">عذراً! طور القصة ما زال تحت التطوير. هتقدر تلعبه في تحديث قادم.</p><div class="menu-actions simple-actions"><button class="g" onclick="menu()">BACK TO MENU</button></div></div>`)}
 function newG(){playNew()}
 function playNew(){const chosen=DIFF();activeSlot=0;S=JSON.parse(JSON.stringify(DS));S.diff=chosen;S.ammoReserve=30;S.magAmmo=6;S.ammoSetup=1;S.resume=null;save();demoNotice('new')}
 function continueGame(){if(!S.resume){toast('NO SAVE YET');return}demoNotice('continue')}
@@ -195,33 +196,34 @@ if(L.b)drawBoss(L.b);
 for(const q of pr){g.fillStyle=q.k?'#f90':'#c7f';g.shadowColor=g.fillStyle;g.shadowBlur=12;g.beginPath();g.arc(q.x+q.w/2,q.y+q.h/2,Math.max(q.w,q.h)/2,0,Math.PI*2);g.fill();g.shadowBlur=0}
 if(!dead&&!(inv>0&&tk%6<3)){const sq=p.sq,ww=p.w*(2-sq),hh=p.h*sq,X=p.x+p.w/2,Y=p.y+p.h,run=Math.abs(p.vx)>.5&&p.on,l=run?Math.sin(tk/3)*3:0,dir=p.face;g.save();g.translate(X,Y);g.scale(1/sq,1/sq);g.scale(dir||1,1);
 // Original Ahmed hero: green top, denim jeans, sneakers and a custom blue cap.
+// Original blue Justice-style adventurer: a human hero, not a Sonic character.
 g.lineCap='round';g.lineJoin='round';
-// legs and denim
-g.fillStyle='#17304a';g.beginPath();g.roundRect(-9,-17,8,16,3);g.roundRect(1,-17,8,16,3);g.fill();
-g.fillStyle='#2865a8';g.beginPath();g.roundRect(-9,-18,8,15,2);g.roundRect(1,-18,8,15,2);g.fill();
-g.strokeStyle='#78a9d7';g.lineWidth=1;g.beginPath();g.moveTo(-5,-15);g.lineTo(-5,-5);g.moveTo(5,-15);g.lineTo(5,-5);g.stroke();
-g.fillStyle='#17283b';g.beginPath();g.roundRect(-11,-4,11,5,2);g.roundRect(1,-4,12,5,2);g.fill();
-g.fillStyle='#e9edf2';g.fillRect(-9,-3,7,1.5);g.fillRect(3,-3,7,1.5);
-// green shirt with collar and chest badge
-g.fillStyle='#174c36';g.beginPath();g.roundRect(-12,-32,24,19,5);g.fill();
-g.fillStyle='#35a85d';g.beginPath();g.roundRect(-11,-32,22,17,4);g.fill();
-g.fillStyle='#8ad69a';g.beginPath();g.moveTo(-4,-31);g.lineTo(0,-27);g.lineTo(4,-31);g.lineTo(2,-24);g.lineTo(-2,-24);g.closePath();g.fill();
-g.fillStyle='#f4d45c';g.beginPath();g.arc(0,-21,3.2,0,Math.PI*2);g.fill();
-g.fillStyle='#20563c';g.fillRect(-1,-24,2,6);
-// arms and hands
-g.fillStyle='#24874b';g.beginPath();g.roundRect(-16,-30,6,14,3);g.roundRect(10,-30,6,14,3);g.fill();
-g.fillStyle='#e7b58d';g.beginPath();g.arc(-13,-14,3,0,Math.PI*2);g.arc(13,-14,3,0,Math.PI*2);g.fill();
+const punch=meleeTicks>0, punchReach=punch?(comboStep===3?24:16):0, punchBob=punch?Math.sin(tk*.8)*2:0;
+// legs, dark trousers and blue runner boots
+g.fillStyle='#14243a';g.beginPath();g.roundRect(-9,-18,8,17,3);g.roundRect(1,-18,8,17,3);g.fill();
+g.fillStyle='#2369b2';g.beginPath();g.roundRect(-12+l,-5,13,7,3);g.roundRect(1-l,-5,13,7,3);g.fill();
+g.fillStyle='#d9f3ff';g.fillRect(-10+l,-2,8,2);g.fillRect(3-l,-2,8,2);
+// blue jacket and chest emblem
+g.fillStyle='#103d78';g.beginPath();g.roundRect(-12,-34,24,22,5);g.fill();
+g.fillStyle='#197bd0';g.beginPath();g.roundRect(-10,-33,20,18,4);g.fill();
+g.fillStyle='#8fe8ff';g.beginPath();g.moveTo(0,-29);g.lineTo(6,-23);g.lineTo(0,-17);g.lineTo(-6,-23);g.closePath();g.fill();
+g.fillStyle='#174b88';g.fillRect(-1,-27,2,8);
+// rear arm and punching arm
+g.fillStyle='#15569c';g.beginPath();g.roundRect(-16,-31,7,15,3);g.fill();
+g.fillStyle='#f0c29e';g.beginPath();g.arc(-13,-14,3,0,Math.PI*2);g.fill();
+g.save();g.translate(11,-29+punchBob);if(punch)g.translate(punchReach,-1);g.rotate(punch?(comboStep===3?-.12:-.32):Math.sin(tk/8)*.08);
+g.fillStyle='#197bd0';g.beginPath();g.roundRect(-1,0,8,14,3);g.fill();
+g.fillStyle='#f0c29e';g.beginPath();g.roundRect(1,11,8,6,3);g.fill();g.restore();
 // neck and face
-g.fillStyle='#c88f68';g.fillRect(-3,-35,6,5);
-g.fillStyle='#efbd96';g.beginPath();g.roundRect(-9,-46,18,16,6);g.fill();
-g.fillStyle='#fff';g.beginPath();g.ellipse(-3,-39,2.3,3,0,0,Math.PI*2);g.ellipse(4,-39,2.3,3,0,0,Math.PI*2);g.fill();
-g.fillStyle='#24334a';g.beginPath();g.arc(-2,-39,1.2,0,Math.PI*2);g.arc(5,-39,1.2,0,Math.PI*2);g.fill();
-g.strokeStyle='#8c4f3e';g.lineWidth=1.3;g.beginPath();g.moveTo(-2,-33);g.quadraticCurveTo(1,-31,4,-33);g.stroke();
-// cap: crown, seam and forward brim
-g.fillStyle='#15548b';g.beginPath();g.arc(0,-45,10,Math.PI,Math.PI*2);g.lineTo(10,-43);g.lineTo(-10,-43);g.closePath();g.fill();
-g.fillStyle='#287fc0';g.beginPath();g.ellipse(5,-43,11,2.5,0,0,Math.PI*2);g.fill();
-g.strokeStyle='#72b5e4';g.lineWidth=1;g.beginPath();g.moveTo(0,-53);g.lineTo(0,-46);g.stroke();
-g.fillStyle='#f3d45c';g.beginPath();g.arc(-2,-47,1.7,0,Math.PI*2);g.fill();
+g.fillStyle='#c88f68';g.fillRect(-3,-38,6,5);
+g.fillStyle='#efbd96';g.beginPath();g.roundRect(-9,-49,18,16,6);g.fill();
+g.fillStyle='#fff';g.beginPath();g.ellipse(-3,-42,2.3,3,0,0,Math.PI*2);g.ellipse(4,-42,2.3,3,0,0,Math.PI*2);g.fill();
+g.fillStyle='#152a43';g.beginPath();g.arc(-2,-42,1.2,0,Math.PI*2);g.arc(5,-42,1.2,0,Math.PI*2);g.fill();
+g.strokeStyle='#8c4f3e';g.lineWidth=1.3;g.beginPath();g.moveTo(-2,-36);g.quadraticCurveTo(1,-34,4,-36);g.stroke();
+// original blue half-mask/visor and short swept hair silhouette
+g.fillStyle='#0b4b91';g.beginPath();g.roundRect(-10,-51,20,6,3);g.fill();
+g.fillStyle='#42c9ff';g.beginPath();g.roundRect(-7,-49,6,2,1);g.roundRect(2,-49,6,2,1);g.fill();
+g.fillStyle='#123f79';g.beginPath();g.moveTo(-9,-50);g.lineTo(-7,-56);g.lineTo(0,-53);g.lineTo(7,-56);g.lineTo(10,-50);g.closePath();g.fill();
 g.restore()}shots.forEach(q=>{g.fillStyle='#8ff';g.shadowColor='#8ff';g.shadowBlur=16;g.beginPath();g.arc(q.x+q.w/2,q.y+q.h/2,q.w/2,0,Math.PI*2);g.fill();g.shadowBlur=0});ps.forEach(q=>{g.globalAlpha=Math.min(1,q.l/20);g.fillStyle=q.c;g.fillRect(q.x,q.y,4,4)});g.globalAlpha=1;g.restore();
 const progress=Math.max(0,Math.min(.999,p.x/(L.W*T)));const phase=(S.mood==='morning'?0:S.mood==='sunset'?1:2);const weather=worldMode?Math.floor(time/150)%4:(L.id%11)%4;g.save();if(phase===0){g.fillStyle='rgba(170,205,225,.07)';g.fillRect(0,0,VW,VH);g.fillStyle='rgba(255,225,170,.22)';g.beginPath();g.arc(760,105,34,0,Math.PI*2);g.fill();g.fillStyle='rgba(255,239,190,.12)';g.beginPath();g.arc(760,105,52,0,Math.PI*2);g.fill()}else if(phase===1){g.fillStyle='rgba(218,139,92,.12)';g.fillRect(0,0,VW,VH);g.fillStyle='#f4a35f';g.beginPath();g.arc(760,86,27,0,Math.PI*2);g.fill();g.strokeStyle='rgba(255,188,112,.55)';g.lineWidth=2;for(let a=-1.1;a<=1.1;a+=.22){g.beginPath();g.moveTo(760+Math.sin(a)*34,86-Math.cos(a)*34);g.lineTo(760+Math.sin(a)*49,86-Math.cos(a)*49);g.stroke()}}else{g.fillStyle='rgba(3,5,18,.58)';g.fillRect(0,0,VW,VH);for(let i=0;i<42;i++){const sx=(i*173+tk*.18)%VW,sy=(i*71)%220;g.fillStyle='rgba(225,235,255,.62)';g.fillRect(sx,sy,2,2)}}if(weather===1||weather===3){g.strokeStyle='rgba(190,215,235,.42)';g.lineWidth=1;for(let i=0;i<70;i++){const x=(i*139+tk*5)%VW,y=(i*83+tk*8)%VH;g.beginPath();g.moveTo(x,y);g.lineTo(x-5,y+13);g.stroke()}}g.restore();
 if(phase===0){g.save();g.translate(VW-48,46);g.strokeStyle='rgba(255,224,143,.9)';g.lineWidth=3;for(let a=0;a<8;a++){const q=a*Math.PI/4;g.beginPath();g.moveTo(Math.cos(q)*18,Math.sin(q)*18);g.lineTo(Math.cos(q)*25,Math.sin(q)*25);g.stroke()}g.fillStyle='#ffd978';g.shadowColor='#ffcf68';g.shadowBlur=18;g.beginPath();g.arc(0,0,13,0,Math.PI*2);g.fill();g.restore()}else if(phase===2){g.save();g.translate(VW-48,46);g.fillStyle='#dce8ff';g.shadowColor='#a9caff';g.shadowBlur=16;g.beginPath();g.arc(0,0,16,0,Math.PI*2);g.fill();g.shadowBlur=0;g.fillStyle='#10172d';g.beginPath();g.arc(8,-7,15,0,Math.PI*2);g.fill();g.fillStyle='rgba(220,232,255,.65)';g.beginPath();g.arc(-19,-18,1.5,0,Math.PI*2);g.fill();g.restore()}
