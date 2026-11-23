@@ -29,7 +29,7 @@ if(L.boss){fl(32);L.W=32;return L}
 fl(6);const N=bn?70:48+l*5+w*3;
 while(x<N){const k=r();let t=k<.3?0:k<.42?1:k<.62?2:k<.74?3:k<.88?4:5;if(bn&&(t==1||t==4))t=k<.6?5:2;
 if(t==0){const n=3+(r()*4|0);if(L.cp.length==1&&x>N*.33||L.cp.length==2&&x>N*.66)L.cp.push({x:x*T+8,y:y*T});const s=x;fl(n);
- if(n>=5&&!bn&&r()<.5+hard*.4)L.en.push({x:s*T+20,y:y*T-24,w:26,h:24,x0:s*T,x1:(s+n)*T-26,d:1,a:1});for(let i=s;i<x;i+=2)coin(i*T+16,y*T-30)}
+ if(n>=5&&!bn&&r()<.35+hard*.4+DIFF()*.1)L.en.push({x:s*T+20,y:y*T-24,w:26+(DIFF()==2?5:0),h:24+(DIFF()==2?4:0),x0:s*T,x1:(s+n)*T-26,d:1,a:1,hp:DIFF()==0?1:DIFF()==1?2:3,type:Math.floor(r()*3)});for(let i=s;i<x;i+=2)coin(i*T+16,y*T-30)}
 else if(t==1){fl(2);L.sp.push({x:x*T+4,y:y*T-20,w:24,h:20});fl(1);if(hard>.25&&r()<.5){L.sp.push({x:(x-1)*T+4+T,y:y*T-20,w:24,h:20});fl(1)}fl(2)}
 else if(t==2){const gn=Math.min(4,2+(r()*(1+hard*3)|0));gap(gn);for(let i=0;i<gn;i++)coin((x-gn+i+.5)*T,(y-2-Math.sin(Math.PI*(i+.5)/gn)*1.6)*T);fl(2)}
 else if(t==3){y=Math.max(7,Math.min(11,y+[-2,-1,1,2][r()*4|0]));fl(3)}
@@ -44,9 +44,11 @@ fl(10);L.W=x;L.goal={x:(x-5)*T,y:(y-3)*T,w:T,h:3*T};
 for(let i=1;i<=3;i++){let c=Math.floor(L.W*i/4);while(L.h[c]>=99)c++;L.st.push({x:c*T+16,y:(L.h[c]-3.2)*T,got:0})}
 return L}
 //ENDGEN
-const DS={b:{},s:{},c:0,d:0,j:0,t:0,k:0,a:{},v:{m:.6,s:.8,x:0},last:0,done:0,sk:0,u:0,w:0};
+const DS={b:{},s:{},c:0,d:0,j:0,t:0,k:0,a:{},v:{m:.6,s:.8,x:0},last:0,done:0,sk:0,u:0,w:0,diff:1,resume:null};
 let S=JSON.parse(JSON.stringify(DS));try{const q=JSON.parse(localStorage.getItem('riftrunner'));if(q)S=Object.assign(S,q)}catch(e){}
 const save=()=>{try{localStorage.setItem('riftrunner',JSON.stringify(S))}catch(e){}};
+const DIFF=()=>Math.max(0,Math.min(2,Number(S.diff??1)));
+function setDiff(d){S.diff=d;save();menu()}
 const done=i=>S.b[i]!==undefined,wst=w=>{let n=0;for(let l=0;l<10;l++)n+=S.s[w*11+l]||0;return n},tst=()=>{let n=0;for(let w=0;w<10;w++)n+=wst(w);return n},nbo=()=>Object.keys(S.b).length;
 function unl(i){const w=i/11|0,l=i%11;return l==10?wst(w)>=18:l==0?(w==0||done((w-1)*11+9)):done(i-1)}
 const AL=[['First Steps','Complete any level',()=>nbo()>=1],['Star Collector','Collect 25 stars',()=>tst()>=25],['Boss Slayer','Defeat a boss',()=>{for(let w=0;w<10;w++)if(done(w*11+9))return 1}],['Untouchable','Beat a level 4+ without dying',()=>S.u],['World Hopper','Finish World 1',()=>done(9)],['Halfway There','Finish World 5',()=>done(53)],['Treasure Hunter','Collect 500 coins',()=>S.c>=500],['Bonus Seeker','Finish a bonus level',()=>{for(let w=0;w<10;w++)if(done(w*11+10))return 1}],['Squasher','Stomp 50 enemies',()=>S.k>=50],['Persistent','Fall 100 times',()=>S.d>=100],['Star Hoarder','Collect 150 stars',()=>tst()>=150],['Riftbreaker','Beat the game',()=>S.done]];
@@ -77,9 +79,9 @@ U.addEventListener('click',e=>{if(e.target.tagName=='BUTTON'){ac();sfx('ui');if(
 cv.addEventListener('click',()=>{ac();if(st=='end'&&E>900)menu()});
 const ui=h=>{U.innerHTML=h;U.style.display=h?'flex':'none';$('pb').style.display=st=='play'?'block':'none'};
 const sk=()=>SKIN[S.sk];
-function menu(){st='menu';mus(11);ui(`<h1>RIFTRUNNER</h1><p class=sub>Ten worlds. One Rift. Run, jump, survive.</p><div class=col><button class=g onclick="newG()">PLAY</button><button onclick="cont()">CONTINUE</button><button onclick="sel(S.w)">LEVEL SELECT</button><button onclick="setM()">SETTINGS</button><button onclick="achM()">ACHIEVEMENTS</button><button onclick="crd()">CREDITS</button></div><p class=sub>★ ${tst()} / 300</p>`)}
+function menu(){st='menu';mus(11);ui(`<h1>RIFTRUNNER</h1><p class=sub>Ten worlds. One Rift. Run, jump, survive.</p><p class=sub>SELECT DIFFICULTY</p><div class=row><button class=s ${DIFF()==0?'g':''} onclick="setDiff(0)">EASY</button><button class=s ${DIFF()==1?'g':''} onclick="setDiff(1)">NORMAL</button><button class=s ${DIFF()==2?'g':''} onclick="setDiff(2)">HARD</button></div><div class=col><button class=g onclick="newG()">PLAY</button><button onclick="cont()">CONTINUE</button><button onclick="sel(S.w)">LEVEL SELECT</button><button onclick="setM()">SETTINGS</button><button onclick="achM()">ACHIEVEMENTS</button><button onclick="crd()">CREDITS</button></div><p class=sub>★ ${tst()} / 300</p><p class=sub style="letter-spacing:.22em;color:#9cf;font-weight:bold">MADE BY AMR</p>`)}
 function newG(){start(0)}
-function cont(){let i=0;while(i<109&&done(i)&&unl(i+1+(i%11==9?1:0)*0)&&i%11!=10)i++;let n=0;for(let a=0;a<110;a++){if(a%11==10)continue;if(unl(a)&&!done(a)){n=a;break}n=a}start(n)}
+function cont(){if(S.resume&&S.resume.id>=0&&S.resume.id<110){start(S.resume.id);if(S.resume.cpi&&L.cp[S.resume.cpi]){cpi=S.resume.cpi;p.x=L.cp[cpi].x;p.y=L.cp[cpi].y-28}return}let i=0;while(i<109&&done(i)&&unl(i+1+(i%11==9?1:0)*0)&&i%11!=10)i++;let n=0;for(let a=0;a<110;a++){if(a%11==10)continue;if(unl(a)&&!done(a)){n=a;break}n=a}start(n)}
 function sel(w){st='sel';S.w=w;let h=`<h2>WORLD MAP</h2><div class=row>`;for(let i=0;i<10;i++)h+=`<button class="s ${i==w?'g':''}" ${unl(i*11)?'':'disabled'} onclick="sel(${i})">${i+1}</button>`;
 h+=`</div><h2 style="font-size:1.3em">${w+1}. ${WN[w].toUpperCase()}  ★ ${wst(w)}/30</h2><div class=row>`;for(let l=0;l<11;l++){const i=w*11+l,o=unl(i);h+=`<button class=s ${o?'':'disabled'} onclick="start(${i})">${l==10?'BONUS':l==9?'BOSS':l+1}<br>${o?'★'.repeat(S.s[i]||0)+'☆'.repeat(3-(S.s[i]||0)):'🔒'}</button>`}
 ui(h+`</div><p class=sub>Bonus level unlocks with 18★ in this world</p><button onclick="menu()">BACK</button>`)}
@@ -91,23 +93,24 @@ h+=`</table><h2 style="font-size:1.1em">STATS</h2><table><tr><td>Levels cleared<
 function crd(){st='cr';ui(`<h2>CREDITS</h2><p class=sub>RIFTRUNNER<br>Game design, programming, art and music<br>created entirely in code with HTML5 canvas and WebAudio.</p><button onclick="menu()">BACK</button>`)}
 let pausedFlag=0;
 function togglePause(){if(st=='play'){st='pause';pausedFlag=1;ui(`<h2>PAUSED</h2><div class=col><button class=g onclick="togglePause()">RESUME</button><button onclick="start(L.id)">RESTART</button><button onclick="setM()">SETTINGS</button><button onclick="pausedFlag=0;sel(L.w)">LEVEL SELECT</button><button onclick="pausedFlag=0;menu()">MAIN MENU</button></div>`)}else if(st=='pause'||(st=='set'&&pausedFlag)){st='play';pausedFlag=0;ui('')}}
-function start(id){L=mk(id);S.last=id;const w=L.w;if(L.boss){SG[10].r=RT[w]-5;mus(10)}else mus(w);
+function start(id){L=mk(id);S.last=id;S.resume={id,cpi:0};save();const w=L.w;if(L.boss){SG[10].r=RT[w]-5;mus(10)}else mus(w);
 p={x:2*T,y:11*T-28,w:20,h:28,vx:0,vy:0,on:0,face:1,rid:null,sq:1};cpi=0;cam=0;time=0;coins=0;stars=0;kills=0;dead=0;inv=0;dthL=0;ps=[];pr=[];hp=3;fd=1;card=130;pausedFlag=0;st='play';ui('');
-if(L.boss){const n=3+(w>4)+(w>8);L.b={x:24*T,y:11*T-64,w:64,h:64,hp:n,max:n,inv:0,cd:90,mode:'idle',t:0,vx:0,vy:0,d:-1,pi:0}}}
+if(L.boss){const n=Math.max(2,Math.round((3+(w>4)+(w>8))*[.75,1,1.55][DIFF()]));L.b={x:24*T,y:11*T-64,w:64,h:64,hp:n,max:n,inv:0,cd:90,mode:'idle',t:0,vx:0,vy:0,d:-1,pi:0}}}
 // GAME
 const sol=(cx,cy)=>cx<0||cx>=L.W||cy>=(L.h[cx]??99),ov=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
 function burst(x,y,c,n=14){for(let i=0;i<n;i++)ps.push({x,y,vx:(Math.random()-.5)*7,vy:(Math.random()-.8)*7,l:30+Math.random()*20,c})}
 function hurt(){if(inv>0||dead)return;if(L.boss&&hp>1){hp--;inv=90;p.vy=-8;sfx('hurt');burst(p.x,p.y,'#f55');return}die()}
 function die(){dead=55;S.d++;dthL++;sfx(L.boss?'lose':'hurt');burst(p.x+10,p.y+14,sk(),30);burst(p.x+10,p.y+14,'#fff',10)}
 function respawn(){const c=L.cp[cpi];p.x=c.x;p.y=c.y-28;p.vx=p.vy=0;hp=3;inv=60;pr=[];L.pl.forEach(f=>{f.y=f.oy;f.t=0;f.fv=0});if(L.boss){const b=L.b;b.x=24*T;b.mode='idle';b.cd=90;b.vx=0;b.y=11*T-64;b.hp=b.max}fd=.8}
-function win(){if(st!='play')return;st='win';sfx('win');const id=L.id,sc=coins*10+stars*500+kills*50+Math.max(0,1500-(time*10|0))+(L.boss?2000:0);
+function win(){if(st!='play')return;st='win';sfx('win');S.resume=null;save();const id=L.id,sc=coins*10+stars*500+kills*50+Math.max(0,1500-(time*10|0))+(L.boss?2000:0);
 S.s[id]=Math.max(S.s[id]||0,L.boss?3:stars);S.b[id]=Math.max(S.b[id]||0,sc);S.c+=coins;S.k+=kills;if(!dthL&&L.l>=3)S.u=1;
 if(id==108){S.done=1;chk();st='end';E=0;mus(12);ui('');return}chk();
 const nx=L.l==10?-1:L.l==9?(L.w+1)*11:id+1;
 ui(`<h2>${L.boss?'BOSS DEFEATED!':'LEVEL CLEAR!'}</h2><p style="font-size:2em;margin:4px">${'★'.repeat(L.boss?3:stars)}${'☆'.repeat(3-(L.boss?3:stars))}</p><p>Score <b>${sc}</b> · Best ${S.b[id]} · Coins ${coins} · Time ${time.toFixed(1)}s</p><div class=row>${nx>=0?`<button class=g onclick="start(${nx})">NEXT</button>`:''}<button onclick="start(${id})">REPLAY</button><button onclick="sel(${L.w})">LEVEL SELECT</button></div>`)}
 let gpOK=true;
 function pad(){if(!gpOK)return null;try{if(typeof navigator==='undefined'||typeof navigator.getGamepads!=='function'){gpOK=false;return null}const a=navigator.getGamepads();if(!a)return null;for(let i=0;i<a.length;i++)if(a[i]&&a[i].connected!==false)return a[i];return null}catch(e){gpOK=false;return null}}
-function upd(){S.t+=1/60;time+=1/60;if(card>0)card--;if(fd>0)fd-=.03;
+let autosaveTicks=0;
+function upd(){S.t+=1/60;time+=1/60;if(++autosaveTicks>=300){autosaveTicks=0;S.resume={id:L.id,cpi};save()}if(card>0)card--;if(fd>0)fd-=.03;
 let ax=(K.ArrowRight||K.KeyD?1:0)-(K.ArrowLeft||K.KeyA?1:0),jh=K.Space||K.ArrowUp||K.KeyW||K.KeyZ;const gp=pad();
 try{if(gp){if(Math.abs(gp.axes[0])>.3)ax=gp.axes[0]>0?1:-1;if(gp.buttons[14]&&gp.buttons[14].pressed)ax=-1;if(gp.buttons[15]&&gp.buttons[15].pressed)ax=1;const b=(gp.buttons[0]&&gp.buttons[0].pressed)||(gp.buttons[1]&&gp.buttons[1].pressed);if(b&&!gpj)jp=6;gpj=b;jh=jh||b;const s=gp.buttons[9]&&gp.buttons[9].pressed;if(s&&!gps)togglePause();gps=s}}catch(e){gpOK=false}
 ps.forEach(q=>{q.x+=q.vx;q.y+=q.vy;q.vy+=.25;q.l--});ps=ps.filter(q=>q.l>0);
@@ -129,9 +132,9 @@ for(const s of L.sp)if(ov(hb,s))hurt();
 for(const z of L.lz){const c=(Math.round(time*60)+z.ph)%150;if(c<60&&ov(hb,{x:z.x,y:0,w:10,h:z.y}))hurt()}
 for(const c of L.co)if(!c.got&&Math.abs(c.x-p.x-10)<22&&Math.abs(c.y-p.y-14)<26){c.got=1;coins++;sfx('coin');burst(c.x,c.y,'#fd4',5)}
 for(const s of L.st)if(!s.got&&Math.abs(s.x-p.x-10)<26&&Math.abs(s.y-p.y-14)<30){s.got=1;stars++;sfx('star');burst(s.x,s.y,'#fff',22)}
-for(const e of L.en)if(e.a){e.x+=e.d*1.1;if(e.x>e.x1){e.x=e.x1;e.d=-1}if(e.x<e.x0){e.x=e.x0;e.d=1}
- if(ov(hb,e)){if(p.vy>1&&p.y+p.h-p.vy<e.y+14){e.a=0;p.vy=-9;kills++;sfx('stomp');burst(e.x+13,e.y+12,'#f84',14)}else hurt()}}
-for(let c=cpi+1;c<L.cp.length;c++)if(p.x>L.cp[c].x){cpi=c;burst(p.x,p.y,'#4f8',12);toast('Checkpoint')}
+for(const e of L.en)if(e.a){e.x+=e.d*(.75+DIFF()*.65);if(e.x>e.x1){e.x=e.x1;e.d=-1}if(e.x<e.x0){e.x=e.x0;e.d=1}
+ if(ov(hb,e)){if(p.vy>1&&p.y+p.h-p.vy<e.y+14){e.hp=(e.hp||1)-1;p.vy=-9;kills++;sfx('stomp');burst(e.x+13,e.y+12,e.type==0?'#f84':e.type==1?'#5df':'#b6f',14);if(e.hp<=0)e.a=0}else hurt()}}
+for(let c=cpi+1;c<L.cp.length;c++)if(p.x>L.cp[c].x){cpi=c;S.resume={id:L.id,cpi};save();burst(p.x,p.y,'#4f8',12);toast('Checkpoint')}
 if(L.boss)boss();
 pr.forEach(q=>{q.x+=q.vx;q.y+=q.vy;if(q.gv)q.vy+=.12;if(ov(hb,q))hurt()});pr=pr.filter(q=>q.x>-50&&q.x<L.W*T+50&&q.y<VH+50);
 if(!L.boss&&ov(p,L.goal))win();
@@ -163,7 +166,7 @@ if(L.goal){const o=L.goal;g.fillStyle='#fff';g.fillRect(o.x+14,o.y,4,o.h);g.fill
 for(const k of L.cp.slice(1)){g.fillStyle=cpi>=L.cp.indexOf(k)?'#4f8':'#888';g.fillRect(k.x,k.y-26,3,26);g.fillRect(k.x,k.y-26,14,9)}
 for(const q of L.co)if(!q.got){g.fillStyle='#fd4';g.beginPath();g.ellipse(q.x,q.y,Math.abs(Math.cos(tk/12+q.x))*7+2,8,0,0,7);g.fill()}
 for(const s of L.st)if(!s.got){g.shadowColor='#fff';g.shadowBlur=12;star(s.x,s.y+Math.sin(tk/15)*3,14,'#ffe14a');g.shadowBlur=0}
-for(const e of L.en)if(e.a){g.fillStyle='#e5532d';g.beginPath();g.roundRect(e.x,e.y,e.w,e.h,8);g.fill();g.fillStyle='#fff';g.fillRect(e.x+5,e.y+6,6,6);g.fillRect(e.x+15,e.y+6,6,6);g.fillStyle='#000';g.fillRect(e.x+6+e.d*2,e.y+8,3,3);g.fillRect(e.x+16+e.d*2,e.y+8,3,3)}
+for(const e of L.en)if(e.a){g.fillStyle=['#e5532d','#35bde8','#9b62e8'][e.type||0];g.beginPath();if((e.type||0)==1){g.moveTo(e.x,e.y+e.h);g.lineTo(e.x+e.w/2,e.y-5);g.lineTo(e.x+e.w,e.y+e.h);g.closePath()}else g.roundRect(e.x,e.y,e.w,e.h,(e.type||0)==2?3:8);g.fill();g.fillStyle='#fff';g.fillRect(e.x+5,e.y+6,6,6);g.fillRect(e.x+15,e.y+6,6,6);g.fillStyle='#000';g.fillRect(e.x+6+e.d*2,e.y+8,3,3);g.fillRect(e.x+16+e.d*2,e.y+8,3,3)}
 if(L.b)drawBoss(L.b);
 for(const q of pr){g.fillStyle=q.k?'#f90':'#f4a';g.shadowColor=g.fillStyle;g.shadowBlur=10;g.fillRect(q.x,q.y,q.w,q.h);g.shadowBlur=0}
 if(!dead&&!(inv>0&&tk%6<3)){const sq=p.sq,ww=p.w*(2-sq)*1,hh=p.h*sq,X=p.x+p.w/2,Y=p.y+p.h,run=Math.abs(p.vx)>.5&&p.on;g.fillStyle=sk();g.beginPath();g.roundRect(X-ww/2,Y-hh,ww,hh-5,6);g.fill();
