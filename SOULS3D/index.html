@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ASHEN OATH — 3D Action RPG</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@400;600;700&display=swap');
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#080b10;color:#eee;font-family:Inter,Arial,sans-serif}canvas{display:block}
+#hud{position:fixed;inset:0;pointer-events:none;display:none}
+.brand{position:absolute;top:20px;left:25px;font:700 20px Cinzel,serif;letter-spacing:4px;color:#d5bd8b;text-shadow:0 2px 12px #000}
+.bars{position:absolute;top:62px;left:25px;width:min(300px,42vw)}.bar{height:12px;background:#25252a;border:1px solid #6f6250;margin:7px 0;transform:skewX(-12deg);box-shadow:0 2px 8px #000}.fill{height:100%;width:100%;transition:width .15s}.hp{background:linear-gradient(90deg,#7e2422,#d34b38)}.st{background:linear-gradient(90deg,#557b3d,#a6c96a)}.xp{background:linear-gradient(90deg,#8b6a32,#d9bd77)}
+#bossUI{position:absolute;bottom:9%;left:50%;transform:translateX(-50%);width:min(520px,70vw);text-align:center;display:none}.bossname{font:600 16px Cinzel;color:#e4c88c;letter-spacing:3px;margin-bottom:8px}.bossbar{height:13px;background:#292323;border:1px solid #967e5d}.bossfill{height:100%;width:100%;background:linear-gradient(90deg,#70201e,#ce4936)}
+#stats{position:absolute;right:24px;top:24px;text-align:right;color:#d7c9a9;font:14px Cinzel;line-height:1.8;text-shadow:0 2px 5px #000}
+#hint{position:absolute;bottom:25px;left:50%;transform:translateX(-50%);padding:10px 16px;background:#080b10bb;border:1px solid #7c6a4d;color:#e8d7b5;font-size:13px;letter-spacing:1px;white-space:nowrap}
+#toast{position:absolute;top:22%;left:50%;transform:translateX(-50%);font:600 22px Cinzel;color:#e6d1a5;text-shadow:0 3px 10px #000;opacity:0;transition:opacity .4s;text-align:center}
+#menu{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,#05080de8,#080b10a8),radial-gradient(ellipse at 70% 50%,#4a3322,#080b10 70%);z-index:5}
+.panel{width:min(560px,92vw);padding:34px 40px;border:1px solid #78664b;background:linear-gradient(145deg,#15171aeF,#080a0eeF);box-shadow:0 20px 80px #000;text-align:center}
+.kicker{font:12px Cinzel;letter-spacing:6px;color:#9e8c6d}.title{font:900 clamp(38px,8vw,68px) Cinzel;color:#d6bd88;letter-spacing:5px;margin:12px 0 0;text-shadow:0 4px 20px #000}.subtitle{font:12px Cinzel;letter-spacing:4px;color:#8d8a82;margin:5px 0 26px}
+.desc{font-size:14px;color:#b9b5aa;line-height:1.8;max-width:420px;margin:0 auto 25px}
+button{font:600 14px Cinzel;letter-spacing:2px;color:#d8c79e;background:#17191c;border:1px solid #756447;padding:13px 24px;margin:6px;cursor:pointer;transition:.2s}button:hover{background:#d0b783;color:#111;border-color:#e9d7ad;transform:translateY(-2px)}.mainbtn{background:#bca16d;color:#121212;border-color:#e5d2a5;min-width:210px}
+#overlay{position:fixed;inset:0;background:#05070bea;z-index:7;display:none;align-items:center;justify-content:center;text-align:center}.modal{max-width:520px;padding:35px;border:1px solid #806c4a;background:#121519}.modal h2{font:700 34px Cinzel;color:#d5bc88}.modal p{color:#c3bba9;line-height:1.8}
+#cross{position:absolute;left:50%;top:50%;width:8px;height:8px;border:1px solid #e2d3b0;border-radius:50%;transform:translate(-50%,-50%);opacity:.6}
+#mobile{position:absolute;bottom:90px;right:20px;display:none;pointer-events:auto}
+@media(max-width:700px){.panel{padding:26px 18px}.bars{top:65px}.brand{font-size:15px}.hint{font-size:10px}#mobile{display:block}#stats{font-size:11px}}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
+</head>
+<body>
+<div id="menu"><div class="panel"><div class="kicker">A DARK FANTASY JOURNEY</div><div class="title">ASHEN OATH</div><div class="subtitle">THE LAST EMBER</div><p class="desc">A fallen kingdom. A silent flame. Face the guardians of the old road and reclaim the lost embers. An original 3D action RPG.</p><button class="mainbtn" id="start">BEGIN JOURNEY</button><div><button id="how">HOW TO PLAY</button><button id="reset">NEW GAME</button></div><p style="font-size:11px;color:#777;margin-top:18px">MADE BY AMR · WEB EDITION</p></div></div>
+<div id="hud"><div class="brand">ASHEN OATH</div><div class="bars"><div class="bar"><div id="hp" class="fill hp"></div></div><div class="bar"><div id="st" class="fill st"></div></div><div class="bar"><div id="xp" class="fill xp"></div></div></div><div id="stats">EMBER <span id="souls">0</span><br>GUARDIANS <span id="kills">0</span> / 4</div><div id="bossUI"><div class="bossname">THE ASHEN WARDEN</div><div class="bossbar"><div id="bossfill" class="bossfill"></div></div></div><div id="hint">WASD MOVE · MOUSE LOOK · CLICK ATTACK · SPACE DODGE · E EMBER SHRINE</div><div id="toast"></div><div id="cross"></div></div>
+<div id="overlay"><div class="modal"><h2 id="modalTitle">FALLEN</h2><p id="modalText">The road is not over.</p><button id="again">RISE AGAIN</button><button id="menuBtn">MAIN MENU</button></div></div>
+<script type="module">
+import * as THREE from 'three';
+const $=id=>document.getElementById(id);
+let scene,camera,renderer,clock,player,weapon,enemyList=[],particles=[],keys={},started=false,dead=false,won=false;
+let hp=100,stamina=100,embers=0,kills=0,attackCD=0,dodgeCD=0,invuln=0,boss=null,lock=null,mouseDown=false,worldTime=0;
+const mat=(c,rough=0.9,metal=0)=>new THREE.MeshStandardMaterial({color:c,roughness:rough,metalness:metal});
+const M={ground:mat('#24272a'),stone:mat('#55504a'),dark:mat('#171a20'),gold:mat('#b89a62',.35,.55),cloth:mat('#394e49'),skin:mat('#b58b6c'),enemy:mat('#4a3630'),glow:new THREE.MeshBasicMaterial({color:'#e4a84f'}),red:new THREE.MeshBasicMaterial({color:'#c74431'})};
+function box(x,y,z,sx,sy,sz,m){let o=new THREE.Mesh(new THREE.BoxGeometry(sx,sy,sz),m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;scene.add(o);return o}
+function cylinder(x,y,z,r1,r2,h,m,n=8){let o=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,n),m);o.position.set(x,y,z);o.castShadow=true;scene.add(o);return o}
+function makeFighter(x,z,big=false,isPlayer=false){
+ let g=new THREE.Group();scene.add(g);let scale=big?1.65:1;
+ const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.34*scale,.58*scale,4,8),isPlayer?M.cloth:M.enemy);torso.position.y=1.25*scale;torso.castShadow=true;g.add(torso);
+ const head=new THREE.Mesh(new THREE.SphereGeometry(.24*scale,12,10),M.skin);head.position.y=2.08*scale;g.add(head);
+ const helm=new THREE.Mesh(new THREE.SphereGeometry(.27*scale,12,8,0,Math.PI*2,0,Math.PI/2),isPlayer?M.dark:M.stone);helm.position.y=2.17*scale;g.add(helm);
+ for(let s of [-1,1]){let leg=new THREE.Mesh(new THREE.CapsuleGeometry(.13*scale,.52*scale,3,6),M.dark);leg.position.set(s*.18*scale,.48*scale,0);g.add(leg);let arm=new THREE.Mesh(new THREE.CapsuleGeometry(.12*scale,.48*scale,3,6),M.stone);arm.position.set(s*.38*scale,1.35*scale,0);arm.rotation.z=s*.16;g.add(arm)}
+ let sword=new THREE.Group();sword.position.set(.48*scale,1.25*scale,-.05);g.add(sword);
+ let blade=new THREE.Mesh(new THREE.BoxGeometry(.10*scale,.85*scale,.13*scale),M.gold);blade.position.y=.5*scale;sword.add(blade);let grip=new THREE.Mesh(new THREE.BoxGeometry(.19*scale,.12*scale,.2*scale),M.dark);grip.position.y=.02;sword.add(grip);
+ g.position.set(x,0,z);g.userData={sword,hp:big?360:(isPlayer?100:85),maxHp:big?360:85,attack:0,hit:false,big,isPlayer,dead:false,phase:0};
+ return g;
+}
+function buildWorld(){
+ scene=new THREE.Scene();scene.background=new THREE.Color('#111820');scene.fog=new THREE.FogExp2('#111820',.027);
+ camera=new THREE.PerspectiveCamera(65,innerWidth/innerHeight,.1,180);renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;document.body.appendChild(renderer.domElement);
+ scene.add(new THREE.HemisphereLight('#9aa9bc','#29201a',1.25));let moon=new THREE.DirectionalLight('#c2cbd5',2.0);moon.position.set(-12,20,8);moon.castShadow=true;moon.shadow.mapSize.set(2048,2048);scene.add(moon);
+ let floor=new THREE.Mesh(new THREE.PlaneGeometry(100,100),M.ground);floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
+ // ruined road and arena
+ for(let i=0;i<26;i++){let z=10-i*4;box(Math.sin(i*4)*7,.7,z,2+Math.random()*2,1.4+Math.random()*2,2,M.stone)}
+ for(let i=0;i<22;i++){let side=i%2?1:-1,z= -8-i*5;let h=3+Math.random()*7;let pillar=box(side*(9+Math.random()*7),h/2,z,1.4,h,1.5,M.dark);pillar.rotation.z=(Math.random()-.5)*.12}
+ // broken arches, scattered stones
+ for(let i=0;i<38;i++){let x=(Math.random()-.5)*38,z=-Math.random()*95;let b=box(x,.25,z,.8+Math.random()*2,.5+Math.random()*1.5,.8+Math.random()*2,M.stone);b.rotation.y=Math.random()*3}
+ // shrine
+ cylinder(0,.28,-9,1.35,1.5,.55,M.stone,12);cylinder(0,.8,-9,.24,.4,.9,M.gold,8);let flame=new THREE.PointLight('#e6a34c',3,12);flame.position.set(0,1.7,-9);scene.add(flame);let fire=new THREE.Mesh(new THREE.IcosahedronGeometry(.32,1),M.glow);fire.position.set(0,1.8,-9);scene.add(fire);
+ player=makeFighter(0,3,false,true);weapon=player.userData.sword;
+ const spots=[[-5,-20],[5,-35],[-4,-53],[4,-68]];spots.forEach((p,i)=>enemyList.push(makeFighter(p[0],p[1],false,false)));
+ boss=makeFighter(0,-87,true,false);boss.visible=false;
+ // mountains silhouettes
+ for(let i=0;i<18;i++){let m=new THREE.Mesh(new THREE.ConeGeometry(8+Math.random()*8,15+Math.random()*20,5),M.dark);m.position.set((i%2?1:-1)*(25+Math.random()*20),5,-i*9);scene.add(m)}
+ clock=new THREE.Clock();camera.position.set(0,5,10);
+}
+function toast(t){$('toast').textContent=t;$('toast').style.opacity=1;clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').style.opacity=0,2300)}
+function updateHUD(){$('hp').style.width=Math.max(0,hp)+'%';$('st').style.width=stamina+'%';$('xp').style.width=Math.min(100,kills*25)+'%';$('souls').textContent=embers;$('kills').textContent=kills}
+function reset(){if(renderer){renderer.dispose();renderer.domElement.remove()}enemyList=[];particles=[];hp=100;stamina=100;embers=0;kills=0;attackCD=dodgeCD=invuln=0;dead=won=false;lock=null;buildWorld();updateHUD();$('overlay').style.display='none';$('bossUI').style.display='none'}
+function showModal(title,text){dead=true;document.exitPointerLock?.();$('modalTitle').textContent=title;$('modalText').textContent=text;$('overlay').style.display='flex'}
+function start(){if(!scene)reset();started=true;$('menu').style.display='none';$('hud').style.display='block';renderer.domElement.requestPointerLock?.();toast('THE EMBER REMEMBERS');}
+$('start').onclick=()=>{if(!scene)reset();start()};$('reset').onclick=()=>{reset();start()};$('again').onclick=()=>{reset();started=true;$('hud').style.display='block'};$('menuBtn').onclick=()=>{started=false;$('overlay').style.display='none';$('hud').style.display='none';$('menu').style.display='flex'};
+$('how').onclick=()=>{alert('WASD: move  |  Mouse: look  |  Left click: sword strike  |  Space: dodge  |  E: rest at the glowing shrine. Defeat four guardians to awaken the Warden.');};
+addEventListener('keydown',e=>{keys[e.code]=true;if(e.code==='Space')e.preventDefault();if(e.code==='KeyE'&&started&&player&&player.position.distanceTo(new THREE.Vector3(0,0,-9))<3){hp=100;stamina=100;embers+=Math.floor(kills*4);updateHUD();toast('EMBER SHRINE — VITALITY RESTORED') }});
+addEventListener('keyup',e=>keys[e.code]=false);
+addEventListener('mousedown',e=>{if(e.button===0&&started&&!dead){mouseDown=true;if(document.pointerLockElement!==renderer.domElement)renderer.domElement.requestPointerLock?.();}});
+addEventListener('mouseup',()=>mouseDown=false);
+addEventListener('mousemove',e=>{if(document.pointerLockElement===renderer.domElement&&player){player.rotation.y-=e.movementX*.0025;camera.userData.pitch=THREE.MathUtils.clamp((camera.userData.pitch||.18)+e.movementY*.0015,-.2,.65)}});
+function damagePlayer(amount){if(invuln>0)return;hp-=amount;invuln=1.0;updateHUD();if(hp<=0)showModal('THE EMBER FADES','You have fallen. Gather your courage and walk the road again.')}
+function enemyAI(e,dt){if(e.userData.dead)return;let d=e.position.distanceTo(player.position);if(d<15){let dir=player.position.clone().sub(e.position);dir.y=0;dir.normalize();e.rotation.y=Math.atan2(dir.x,dir.z);if(d>2.5)e.position.addScaledVector(dir,dt*(e.userData.big?1.7:1.25));else if(e.userData.attack<=0){e.userData.attack=e.userData.big?1.65:1.9;e.userData.hit=false}if(e.userData.attack>0){e.userData.attack-=dt;if(e.userData.attack<.45&&!e.userData.hit&&d<3.1){damagePlayer(e.userData.big?24:13);e.userData.hit=true}}}}
+function attack(){if(attackCD>0||stamina<18)return;attackCD=.55;stamina-=18;player.userData.sword.rotation.x=-1.4;setTimeout(()=>{if(player)player.userData.sword.rotation.x=0},190);let target=null,dist=4;for(let e of [...enemyList,boss])if(e&&e.visible&&!e.userData.dead){let d=e.position.distanceTo(player.position);let facing=new THREE.Vector3(0,0,-1).applyQuaternion(player.quaternion);let to=e.position.clone().sub(player.position).normalize();if(d<dist&&facing.dot(to)>.05){target=e;dist=d}}if(target){target.userData.hp-=target.userData.big?38:48;toast('STRIKE');if(target.userData.hp<=0){target.userData.dead=true;target.visible=false;if(target===boss){won=true;showModal('OATH FULFILLED','The Warden has fallen. The last ember burns once more.')}else{kills++;embers+=35;updateHUD();toast('+35 EMBERS')}}}}
+function dodge(){if(dodgeCD>0||stamina<28)return;dodgeCD=.9;invuln=.55;stamina-=28;let dir=new THREE.Vector3((keys.KeyD?1:0)-(keys.KeyA?1:0),0,(keys.KeyS?1:0)-(keys.KeyW?1:0));if(dir.lengthSq()===0)dir.set(0,0,1).applyQuaternion(player.quaternion);dir.normalize().applyAxisAngle(new THREE.Vector3(0,1,0),player.rotation.y);player.position.addScaledVector(dir,3.3);toast('DODGE')}
+function animate(){requestAnimationFrame(animate);if(!renderer||!scene)return;let dt=Math.min(clock.getDelta(),.04);if(started&&!dead){worldTime+=dt;attackCD=Math.max(0,attackCD-dt);dodgeCD=Math.max(0,dodgeCD-dt);invuln=Math.max(0,invuln-dt);stamina=Math.min(100,stamina+dt*18);
+ if(mouseDown){attack();mouseDown=false}if(keys.Space){keys.Space=false;dodge()}
+ let move=new THREE.Vector3((keys.KeyD?1:0)-(keys.KeyA?1:0),0,(keys.KeyS?1:0)-(keys.KeyW?1:0));if(move.lengthSq()>0){move.normalize().applyAxisAngle(new THREE.Vector3(0,1,0),player.rotation.y);player.position.addScaledVector(move,dt*5.2);if(!keys.KeyA&&!keys.KeyD)player.rotation.y=player.rotation.y}
+ player.position.x=THREE.MathUtils.clamp(player.position.x,-13,13);player.position.z=THREE.MathUtils.clamp(player.position.z,-94,8);
+ enemyList.forEach(e=>enemyAI(e,dt));if(kills>=4&&!boss.visible&&!boss.userData.dead){boss.visible=true;$('bossUI').style.display='block';toast('THE ASHEN WARDEN AWAKENS');}
+ if(boss.visible&&!boss.userData.dead){enemyAI(boss,dt);$('bossfill').style.width=Math.max(0,boss.userData.hp/boss.userData.maxHp*100)+'%'}
+ updateHUD();
+ }
+ if(player){let target=new THREE.Vector3(player.position.x,1.5,player.position.z);let behind=new THREE.Vector3(0,4.2,8.2).applyAxisAngle(new THREE.Vector3(0,1,0),player.rotation.y);let desired=target.clone().add(behind);camera.position.lerp(desired,.12);camera.lookAt(target)}
+ renderer.render(scene,camera)}
+addEventListener('resize',()=>{if(camera&&renderer){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)}});
+buildWorld();$('menu').style.display='flex';$('hud').style.display='none';animate();
+</script>
+</body></html>
