@@ -1,0 +1,24 @@
+{
+  "name": "ashen-oath",
+  "version": "1.0.0",
+  "description": "ASHEN OATH - The Last Ember 3D action RPG",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win portable"
+  },
+  "devDependencies": {
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.amr.ashenoath",
+    "productName": "ASHEN OATH",
+    "asar": true,
+    "files": ["main.js", "index.html"],
+    "win": {
+      "target": ["portable"],
+      "artifactName": "ASHEN-OATH-Setupless-${version}.${ext}"
+    }
+  }
+}
