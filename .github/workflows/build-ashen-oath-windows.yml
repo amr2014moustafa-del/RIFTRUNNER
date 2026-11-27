@@ -1,0 +1,35 @@
+name: Build ASHEN OATH for Windows
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "SOULS3D/**"
+
+permissions:
+  contents: read
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: SOULS3D
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: SOULS3D/package-lock.json
+      - name: Install dependencies
+        run: npm install
+      - name: Build portable Windows app
+        run: npm run dist
+      - name: Upload game
+        uses: actions/upload-artifact@v4
+        with:
+          name: ASHEN-OATH-Windows
+          path: SOULS3D/dist/*.exe
+          if-no-files-found: error
+          retention-days: 30
